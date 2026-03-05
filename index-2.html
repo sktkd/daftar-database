@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Daftar Connect</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sand:    #d4b896;
+  --rust:    #c4390a;
+  --crimson: #b01a0e;
+  --forest:  #2b3d2b;
+  --black:   #080806;
+  --white:   #f8f6f2;
+  --paper:   #f2efe9;
+  --dim:     rgba(8,8,6,.06);
+  --line:    rgba(8,8,6,.12);
+  --muted:   rgba(8,8,6,.42);
+
+  --fh: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --fb: 'Barlow', Helvetica, Arial, sans-serif;
+
+  --hh: 52px;
+  --nh: 56px;
+  --sb: env(safe-area-inset-bottom, 0px);
+  --t: .14s ease;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--fb);background:var(--paper);color:var(--black);min-height:100vh;font-size:14px;line-height:1.5;padding-top:var(--hh);padding-bottom:calc(var(--nh) + var(--sb));-webkit-font-smoothing:antialiased}
+button{cursor:pointer;font-family:var(--fb);border:none;background:none}
+input,select{font-family:var(--fb)}
+img{display:block;max-width:100%}
+
+/* ── HEADER ── */
+header{position:fixed;top:0;left:0;right:0;height:var(--hh);background:var(--black);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:300;border-bottom:1px solid rgba(255,255,255,.07)}
+.logo{font-family:var(--fh);font-size:1.1rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--white)}
+.logo em{color:var(--sand);font-style:normal}
+.hdr-actions{display:flex;align-items:center;gap:12px}
+.hdr-tab{font-family:var(--fh);font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.38);padding:6px 10px;border:1px solid transparent;transition:var(--t)}
+.hdr-tab.active{color:var(--sand);border-color:rgba(212,184,150,.25)}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--nh) + var(--sb));padding-bottom:var(--sb);background:var(--black);display:flex;z-index:300;border-top:1px solid rgba(255,255,255,.07)}
+.bnav{flex:1;background:none;border:none;color:rgba(255,255,255,.32);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-family:var(--fh);font-size:.6rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;transition:var(--t);position:relative;padding:0}
+.bnav .ico{font-size:1.1rem;line-height:1}
+.bnav.active{color:var(--sand)}
+.bnav.active::before{content:'';position:absolute;top:0;left:22%;right:22%;height:1.5px;background:var(--sand)}
+
+/* ── PAGES ── */
+.page{display:none}
+.page.active{display:block;animation:up .22s ease}
+@keyframes up{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.wrap{max-width:1060px;margin:0 auto;padding:0 16px}
+
+/* ── HERO ── */
+.hero{background:var(--black);padding:28px 0 0;position:relative}
+.hero::after{content:'';display:block;height:2px;background:linear-gradient(90deg,var(--rust),var(--sand) 40%,transparent)}
+.hero-label{font-family:var(--fh);font-size:.62rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--sand);opacity:.7;margin-bottom:8px}
+.hero-title{font-family:var(--fh);font-size:clamp(2rem,6vw,3.4rem);font-weight:700;letter-spacing:-.01em;text-transform:uppercase;color:var(--white);line-height:.95;margin-bottom:22px}
+.hero-title em{color:var(--rust);font-style:normal}
+
+/* ── TAB BAR (Materials / Processes) ── */
+.tab-bar{display:flex;border-top:1px solid rgba(255,255,255,.09);margin-top:0}
+.tab-btn{flex:1;font-family:var(--fh);font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);padding:13px 0;border-bottom:2px solid transparent;transition:var(--t);background:none;border-top:none;border-left:none;border-right:none}
+.tab-btn:first-child{border-right:1px solid rgba(255,255,255,.09)}
+.tab-btn.active{color:var(--sand);border-bottom-color:var(--rust)}
+
+/* ── SEARCH BAR ── */
+.search-bar{background:var(--black);padding:0}
+.search-row{display:flex;border-top:1px solid rgba(255,255,255,.07)}
+.search-field{flex:1;padding:11px 14px;border-right:1px solid rgba(255,255,255,.07)}
+.search-field:last-child{border-right:none}
+.s-label{font-family:var(--fh);font-size:.56rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:4px;display:block}
+.s-input,.s-select{width:100%;background:transparent;border:none;color:var(--white);font-family:var(--fb);font-size:.92rem;font-weight:300;padding:0;outline:none;-webkit-appearance:none}
+.s-input::placeholder{color:rgba(255,255,255,.18);font-weight:300}
+.s-select option{background:var(--black)}
+.search-actions{display:flex;border-top:1px solid rgba(255,255,255,.07)}
+.btn-go{flex:1;background:var(--rust);color:var(--white);font-family:var(--fh);font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:12px;transition:var(--t);border-right:1px solid rgba(255,255,255,.1)}
+.btn-go:active{background:var(--crimson)}
+.btn-clr{background:transparent;color:rgba(255,255,255,.3);font-family:var(--fh);font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:12px 16px;transition:var(--t)}
+.btn-clr:active{color:var(--white)}
+@media(max-width:500px){.search-row{flex-direction:column}.search-field{border-right:none;border-bottom:1px solid rgba(255,255,255,.07)}}
+
+/* ── RESULTS ── */
+.results{padding:20px 0 40px}
+.r-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+.r-count{font-family:var(--fh);font-size:.64rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.r-count strong{color:var(--black)}
+.r-sort{background:transparent;border:1px solid var(--line);font-family:var(--fh);font-size:.64rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--black);padding:6px 10px;outline:none;-webkit-appearance:none;cursor:pointer}
+
+/* ── MATERIAL CARD ── */
+.card-list{display:flex;flex-direction:column;gap:1px;background:var(--line)}
+.mat-card{background:var(--white);transition:background var(--t)}
+
+/* card header row */
+.card-head{display:grid;grid-template-columns:1fr auto;gap:12px;padding:14px 16px 10px;border-bottom:1px solid var(--line);align-items:start}
+.mat-name{font-weight:600;font-size:.95rem;letter-spacing:-.01em;margin-bottom:4px}
+.cat-tag{display:inline-block;background:var(--forest);color:var(--white);font-family:var(--fh);font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px}
+.price-col{text-align:right}
+.price-row{display:flex;align-items:baseline;gap:5px;justify-content:flex-end;margin-bottom:2px}
+.price-unit{font-family:var(--fh);font-size:.56rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.price-val{font-weight:600;font-size:.9rem;color:var(--black)}
+.no-price{font-size:.75rem;color:var(--muted);font-weight:300;font-style:italic}
+
+/* vendor rows */
+.vendor-list{display:flex;flex-direction:column;gap:0}
+.vendor-row{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--dim);padding:10px 16px}
+.vendor-row:last-child{border-bottom:none}
+.v-num{font-family:var(--fh);font-size:.6rem;font-weight:700;letter-spacing:.1em;color:var(--muted);min-width:20px}
+.v-info{flex:1;min-width:0}
+.v-company{font-weight:500;font-size:.85rem}
+.v-name{font-size:.75rem;color:var(--muted);font-weight:300}
+.v-city{font-size:.72rem;color:var(--muted);font-weight:300}
+.v-actions{display:flex;gap:6px;flex-shrink:0}
+.btn-call{background:var(--forest);color:var(--white);font-family:var(--fh);font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:7px 11px;transition:var(--t);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.btn-call:active{background:#1a2a1a}
+.btn-wa{background:var(--black);color:var(--white);font-family:var(--fh);font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:7px 11px;transition:var(--t);white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.btn-wa:active{background:var(--rust)}
+@media(max-width:440px){.v-actions{flex-direction:column;gap:3px}}
+
+/* ── PROCESS CARD ── */
+.proc-card{background:var(--white);transition:background var(--t)}
+.proc-head{display:grid;grid-template-columns:1fr auto;gap:12px;padding:14px 16px 10px;border-bottom:1px solid var(--line);align-items:start}
+.proc-name{font-weight:600;font-size:.95rem;letter-spacing:-.01em;margin-bottom:4px}
+.proc-tag{display:inline-block;background:var(--rust);color:var(--white);font-family:var(--fh);font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px}
+.provider-row{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--dim);padding:10px 16px}
+.provider-row:last-child{border-bottom:none}
+.pv-name{flex:1;font-weight:500;font-size:.85rem}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:56px 20px;border:1px solid var(--line);background:var(--white);margin-top:20px}
+.empty-label{font-family:var(--fh);font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.empty-title{font-family:var(--fh);font-size:1.5rem;font-weight:700;text-transform:uppercase;margin-bottom:6px}
+.empty-sub{font-size:.82rem;color:var(--muted);font-weight:300}
+
+/* ── CONFIG PANEL ── */
+.config-strip{background:var(--forest);border-bottom:2px solid var(--rust);display:none}
+.config-strip.open{display:block}
+.config-inner{padding:20px 16px}
+.cfg-title{font-family:var(--fh);font-size:.66rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:14px}
+.cfg-fields{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.cfg-label{display:block;font-family:var(--fh);font-size:.58rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:4px}
+.cfg-input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12);color:var(--white);font-family:var(--fb);font-size:.92rem;font-weight:300;padding:9px 11px;outline:none;transition:var(--t);-webkit-appearance:none}
+.cfg-input:focus{border-color:var(--sand)}
+.cfg-input::placeholder{color:rgba(255,255,255,.22)}
+.cfg-btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn-connect{background:var(--rust);color:var(--white);font-family:var(--fh);font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:10px 20px;transition:var(--t);flex:1}
+.btn-connect:active{background:var(--crimson)}
+.btn-demo-load{background:transparent;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.55);font-family:var(--fh);font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:10px 16px;transition:var(--t)}
+.btn-demo-load:active{border-color:var(--sand);color:var(--sand)}
+.cfg-hint{font-size:.72rem;color:rgba(255,255,255,.3);margin-top:11px;line-height:1.7;font-weight:300}
+.cfg-hint code{background:rgba(0,0,0,.3);padding:1px 5px;font-family:monospace;font-size:.68rem}
+
+/* ── STATUS ── */
+.status{background:var(--forest);color:var(--white);padding:8px 18px;font-family:var(--fh);font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.status.error{background:var(--crimson)}
+.status.hidden{display:none}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(var(--nh) + var(--sb) + 12px);left:50%;transform:translateX(-50%) translateY(8px);background:var(--forest);color:var(--white);padding:9px 18px;font-family:var(--fh);font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;z-index:9999;opacity:0;transition:all .2s ease;pointer-events:none;white-space:nowrap;max-width:calc(100vw - 28px);overflow:hidden;text-overflow:ellipsis}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── CONNECT BTN in header ── */
+.btn-cfg-hdr{font-family:var(--fh);font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:6px 10px;border:1px solid rgba(255,255,255,.1);transition:var(--t)}
+.btn-cfg-hdr:active{color:var(--sand);border-color:rgba(212,184,150,.3)}
+
+/* ── PRINT ── */
+.print-only{display:none}
+@media print{
+  header,.bottom-nav,.search-bar,.tab-bar,.r-bar,.btn-call,.btn-wa,.toast,.config-strip,.status{display:none!important}
+  body{padding:0;background:white;font-size:11px}
+  .print-only{display:block;padding:20px 0;border-bottom:2px solid #000;margin-bottom:16px}
+  .print-only h2{font-family:'Arial Narrow',Arial,sans-serif;font-size:1.4rem;text-transform:uppercase;letter-spacing:.05em}
+  .page{display:block!important}
+}
+
+/* ── PROCESS TYPE TAGS ── */
+.pt-surface{background:#5b3a8a}
+.pt-cutting{background:#1a5f7a}
+.pt-cnc{background:#2b5d2b}
+.pt-lathe{background:#7a3a1a}
+.pt-welding{background:#4a2b00}
+.pt-finish{background:#1a4a5a}
+.pt-textile{background:#6b3a5a}
+.pt-service{background:#3a3a3a}
+</style>
+</head>
+<body>
+
+<div class="status hidden" id="statusBar"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Daftar <em>Connect</em></div>
+  <div class="hdr-actions">
+    <button class="btn-cfg-hdr" onclick="toggleConfig()">⚙ Connect</button>
+  </div>
+</header>
+
+<!-- CONFIG STRIP -->
+<div class="config-strip" id="configPanel">
+  <div class="config-inner wrap">
+    <div class="cfg-title">Connect Google Sheets</div>
+    <div class="cfg-fields">
+      <div>
+        <label class="cfg-label">Spreadsheet ID</label>
+        <input class="cfg-input" id="sheetId" placeholder="Paste the Sheet ID from your URL">
+      </div>
+      <div>
+        <label class="cfg-label">API Key</label>
+        <input class="cfg-input" id="apiKey" type="password" placeholder="Google Sheets API Key">
+      </div>
+    </div>
+    <div class="cfg-btns">
+      <button class="btn-connect" onclick="connectSheet()">Connect & Load</button>
+      <button class="btn-demo-load" onclick="loadFromCSV()">Use Built-in Data</button>
+    </div>
+    <p class="cfg-hint">
+      Sheet ID is in the URL: …/spreadsheets/d/<code>SHEET_ID</code>/edit &nbsp;·&nbsp;
+      Sheet must follow the same column structure as your current vendor list.
+    </p>
+  </div>
+</div>
+
+<!-- ════════ PAGE: SEARCH ════════ -->
+<div class="page active" id="page-search">
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-label">Vendor & Process Library</div>
+      <h1 class="hero-title">Find<br><em>Anyone.</em></h1>
+    </div>
+
+    <!-- Tab bar: Materials / Processes -->
+    <div class="tab-bar" id="tabBar">
+      <button class="tab-btn active" id="tab-materials" onclick="switchTab('materials')">Materials &amp; Suppliers</button>
+      <button class="tab-btn" id="tab-processes" onclick="switchTab('processes')">Processes &amp; Services</button>
+    </div>
+  </section>
+
+  <!-- Search bar -->
+  <div class="search-bar" id="searchBar">
+    <div class="wrap">
+      <div class="search-row" id="searchRowMat">
+        <div class="search-field">
+          <label class="s-label">Material / Item</label>
+          <input class="s-input" id="matName" type="search" placeholder="Ash, Steel, Glass…" oninput="liveSearch()" autocomplete="off">
+        </div>
+        <div class="search-field">
+          <label class="s-label">Category</label>
+          <select class="s-select" id="matCat" onchange="liveSearch()">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+        <div class="search-field">
+          <label class="s-label">Vendor / Company</label>
+          <input class="s-input" id="matVendor" type="search" placeholder="Company or contact name…" oninput="liveSearch()" autocomplete="off">
+        </div>
+      </div>
+      <div class="search-row" id="searchRowProc" style="display:none">
+        <div class="search-field">
+          <label class="s-label">Process / Service</label>
+          <input class="s-input" id="procName" type="search" placeholder="Welding, CNC, Laser…" oninput="liveSearch()" autocomplete="off">
+        </div>
+        <div class="search-field">
+          <label class="s-label">Provider Name</label>
+          <input class="s-input" id="procProvider" type="search" placeholder="Provider name…" oninput="liveSearch()" autocomplete="off">
+        </div>
+      </div>
+      <div class="search-actions">
+        <button class="btn-go" onclick="liveSearch()">Search</button>
+        <button class="btn-clr" onclick="clearSearch()">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="results">
+    <div class="wrap" id="resultsArea">
+      <div class="empty">
+        <div class="empty-label">Daftar Connect</div>
+        <div class="empty-title">Ready</div>
+        <div class="empty-sub">Use built-in data or connect your Google Sheet.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="bnav active" id="bnav-search" onclick="showPage('search')">
+    <span class="ico">⌕</span>Search
+  </button>
+  <button class="bnav" id="bnav-saved" onclick="showPage('saved')">
+    <span class="ico">☑</span>Saved
+  </button>
+</nav>
+
+<!-- ════════ PAGE: SAVED ════════ -->
+<div class="page" id="page-saved">
+  <div class="wrap">
+    <div style="padding:28px 0 18px;border-bottom:2px solid var(--black);margin-bottom:20px">
+      <div style="font-family:var(--fh);font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--rust);margin-bottom:5px">Saved Contacts</div>
+      <h2 style="font-family:var(--fh);font-size:clamp(1.5rem,5vw,2.4rem);font-weight:700;text-transform:uppercase;line-height:1">Your Shortlist</h2>
+    </div>
+    <div class="print-only">
+      <h2>Daftar Connect — Vendor Shortlist</h2>
+      <p id="printDate" style="font-size:.8rem;color:#666;margin-top:4px"></p>
+    </div>
+    <div id="savedContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════
+   EMBEDDED DATA (parsed from your CSV)
+══════════════════════════════════════════ */
+const EMBEDDED_MATERIALS = [
+  {name:"Ash",cat:"Wood",prices:{cft:"3000/-"},vendors:[{name:"Shravan bansal",company:"Forest Products",city:"Gandhidham",contact:"9727795221"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"},{name:"Bhavesh",company:"Chamunda Timber",city:"Ahmedabad",contact:"9687989669"}]},
+  {name:"Pine",cat:"Wood",prices:{},vendors:[{name:"Shravan bansal",company:"Forest Products",city:"Gandhidham",contact:"9727795221"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"},{name:"Bhavesh",company:"Chamunda Timber",city:"Ahmedabad",contact:"9687989669"}]},
+  {name:"Teak",cat:"Wood",prices:{cft:"3000/-"},vendors:[{name:"Shravan bansal",company:"Forest Products",city:"Gandhidham",contact:"9727795221"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"},{name:"Bhavesh",company:"Chamunda Timber",city:"Ahmedabad",contact:"9687989669"}]},
+  {name:"Burma Teak",cat:"Wood",prices:{},vendors:[{name:"Shravan bansal",company:"Forest Products",city:"Gandhidham",contact:"9727795221"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"},{name:"Bhavesh",company:"Chamunda Timber",city:"Ahmedabad",contact:"9687989669"}]},
+  {name:"Walnut",cat:"Wood",prices:{},vendors:[{name:"Shravan bansal",company:"Forest Products",city:"Gandhidham",contact:"9727795221"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"},{name:"Bhavesh",company:"Chamunda Timber",city:"Ahmedabad",contact:"9687989669"}]},
+  {name:"Reclaim Wood",cat:"Wood",prices:{},vendors:[{name:"Shravan bansal",company:"Forest Products",city:"Gandhidham",contact:"9727795221"},{name:"Sunil Pitwa",company:"Mandir carving",city:"Ahmedabad",contact:"9879051109"},{name:"Jayesh Patel",company:"Krishna Wood Mart",city:"Ahmedabad",contact:"9909032061"}]},
+  {name:"Valsari",cat:"Wood",prices:{},vendors:[{name:"Sunil Pitwa",company:"Mandir carving",city:"Ahmedabad",contact:"9879051109"}]},
+  {name:"SS Sheet 1.5 mm",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Sheet 2 mm",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Sheet 3 mm",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Sheet 4 mm",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Sheet 5 mm",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Sheet 6 mm",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Pipe",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Rod",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"MS Sheet 1.5 mm",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"MS Sheet 2 mm",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"MS Sheet 3 mm",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"MS Sheet 4 mm",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"MS Sheet 5 mm",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"MS Sheet 6 mm",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"MS Pipe",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"BRASS Sheet 1.5 mm",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Sheet 2 mm",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Sheet 3 mm",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Sheet 4 mm",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Sheet 5 mm",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Sheet 6 mm",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Pipe",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Rod",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"Glass 6 mm",cat:"Glass",prices:{},vendors:[{name:"Ajmal / Salauddin",company:"Iscon glass design",city:"Ahmedabad",contact:"9106822131"},{name:"Vasim",company:"Glass house",city:"Ahmedabad",contact:"7820054945"},{name:"Ajeet",company:"Glass house",city:"Ahmedabad",contact:"8980916600"}]},
+  {name:"Glass 8 mm",cat:"Glass",prices:{},vendors:[{name:"Ajmal / Salauddin",company:"Iscon glass design",city:"Ahmedabad",contact:"9106822131"},{name:"Vasim",company:"Glass house",city:"Ahmedabad",contact:"7820054945"},{name:"Ajeet",company:"Glass house",city:"Ahmedabad",contact:"8980916600"}]},
+  {name:"Glass 10 mm",cat:"Glass",prices:{},vendors:[{name:"Ajmal / Salauddin",company:"Iscon glass design",city:"Ahmedabad",contact:"9106822131"},{name:"Vasim",company:"Glass house",city:"Ahmedabad",contact:"7820054945"},{name:"Ajeet",company:"Glass house",city:"Ahmedabad",contact:"8980916600"}]},
+  {name:"Glass 12 mm",cat:"Glass",prices:{},vendors:[{name:"Ajmal / Salauddin",company:"Iscon glass design",city:"Ahmedabad",contact:"9106822131"},{name:"Vasim",company:"Glass house",city:"Ahmedabad",contact:"7820054945"},{name:"Ajeet",company:"Glass house",city:"Ahmedabad",contact:"8980916600"}]},
+  {name:"Mirror",cat:"Glass",prices:{},vendors:[{name:"Ajmal / Salauddin",company:"Iscon glass design",city:"Ahmedabad",contact:"9106822131"},{name:"Vasim",company:"Glass house",city:"Ahmedabad",contact:"7820054945"},{name:"Ajeet",company:"Glass house",city:"Ahmedabad",contact:"8980916600"}]},
+  {name:"Acrylic Sheet 2 mm",cat:"Acrylic",prices:{},vendors:[{name:"Balaji Acrylic",company:"Balaji Acrylic",city:"Ahmedabad",contact:"9879218882"},{name:"Parin Doshi",company:"Parul Cooperation",city:"Ahmedabad",contact:"9825061951"},{name:"Sun acrylam",company:"Sun acrylam",city:"Ahmedabad",contact:"9824011722"}]},
+  {name:"Acrylic Sheet 4 mm",cat:"Acrylic",prices:{},vendors:[{name:"Balaji Acrylic",company:"Balaji Acrylic",city:"Ahmedabad",contact:"9879218882"},{name:"Parin Doshi",company:"Parul Cooperation",city:"Ahmedabad",contact:"9825061951"},{name:"Sun acrylam",company:"Sun acrylam",city:"Ahmedabad",contact:"9824011722"}]},
+  {name:"Acrylic Sheet 6 mm",cat:"Acrylic",prices:{},vendors:[{name:"Balaji Acrylic",company:"Balaji Acrylic",city:"Ahmedabad",contact:"9879218882"},{name:"Parin Doshi",company:"Parul Cooperation",city:"Ahmedabad",contact:"9825061951"},{name:"Sun acrylam",company:"Sun acrylam",city:"Ahmedabad",contact:"9824011722"}]},
+  {name:"Acrylic Sheet 8 mm",cat:"Acrylic",prices:{},vendors:[{name:"Balaji Acrylic",company:"Balaji Acrylic",city:"Ahmedabad",contact:"9879218882"},{name:"Parin Doshi",company:"Parul Cooperation",city:"Ahmedabad",contact:"9825061951"},{name:"Sun acrylam",company:"Sun acrylam",city:"Ahmedabad",contact:"9824011722"}]},
+  {name:"Ply 6 mm",cat:"Wood",prices:{},vendors:[{name:"Xyz",company:"Infra ply wood",city:"Ahmedabad",contact:"8460412911"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"Ply 8 mm",cat:"Wood",prices:{},vendors:[{name:"Xyz",company:"Infra ply wood",city:"Ahmedabad",contact:"8460412911"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"Ply 12 mm",cat:"Wood",prices:{},vendors:[{name:"Xyz",company:"Infra ply wood",city:"Ahmedabad",contact:"8460412911"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"Ply 19 mm",cat:"Wood",prices:{},vendors:[{name:"Xyz",company:"Infra ply wood",city:"Ahmedabad",contact:"8460412911"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"Veneer Ash",cat:"Wood",prices:{},vendors:[{name:"Thomas",company:"Gracious veneers",city:"Ahmedabad",contact:"9824555147"}]},
+  {name:"Veneer Patti Ash",cat:"Wood",prices:{},vendors:[{name:"Thomas",company:"Gracious veneers",city:"Ahmedabad",contact:"9824555147"}]},
+  {name:"Veneer Teak",cat:"Wood",prices:{},vendors:[{name:"Thomas",company:"Gracious veneers",city:"Ahmedabad",contact:"9824555147"}]},
+  {name:"Veneer Patti Teak",cat:"Wood",prices:{},vendors:[{name:"Thomas",company:"Gracious veneers",city:"Ahmedabad",contact:"9824555147"}]},
+  {name:"Veneer Walnut",cat:"Wood",prices:{},vendors:[{name:"Thomas",company:"Gracious veneers",city:"Ahmedabad",contact:"9824555147"}]},
+  {name:"Veneer Patti Walnut",cat:"Wood",prices:{},vendors:[{name:"Thomas",company:"Gracious veneers",city:"Ahmedabad",contact:"9824555147"}]},
+  {name:"MDF 3 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"MDF 4 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"MDF 6 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"MDF 8 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"MDF 12 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"MDF 25 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"Block board 25 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"Fabric",cat:"Fabric & Print",prices:{},vendors:[{name:"Vibha",company:"Dynamic",city:"Ahmedabad",contact:"7817957817"}]},
+  {name:"Vinyl transfer print",cat:"Fabric & Print",prices:{},vendors:[{name:"Nimesh",company:"Navrang number plate",city:"Ahmedabad",contact:"9898557036"}]},
+  {name:"Canvas print",cat:"Fabric & Print",prices:{sqft:"150"},vendors:[{name:"Siddhi print tech",company:"Siddhi print tech",city:"Ahmedabad",contact:"9624024239"}]},
+  {name:"Sticker print with lamination",cat:"Fabric & Print",prices:{sqft:"80"},vendors:[{name:"Siddhi print tech",company:"Siddhi print tech",city:"Ahmedabad",contact:"9624024239"}]},
+  {name:"Sticker print without lamination",cat:"Fabric & Print",prices:{sqft:"60"},vendors:[{name:"Siddhi print tech",company:"Siddhi print tech",city:"Ahmedabad",contact:"9624024239"}]},
+  {name:"Frosted film",cat:"Fabric & Print",prices:{},vendors:[{name:"Sachln bhai",company:"Frosted film",city:"Ahmedabad",contact:"9898940990"}]},
+  {name:"Polish material",cat:"Finish",prices:{},vendors:[{name:"Ram chandra paints",company:"Ram chandra paints",city:"Ahmedabad",contact:"6352722239"},{name:"Bhanu pratap singh",company:"Sinco (oil polish)",city:"Jodhpur",contact:"9414194990"}]},
+  {name:"Stone",cat:"Stone",prices:{},vendors:[{name:"Ishaan",company:"Natural granite",city:"Ahmedabad",contact:"9537863555"}]},
+  {name:"Packing material",cat:"Hardware & Misc",prices:{},vendors:[{name:"Shanghvi",company:"Shanghvi packaging material",city:"Ahmedabad",contact:"9327764721"}]},
+  {name:"Hardware",cat:"Hardware & Misc",prices:{},vendors:[{name:"Swaraj",company:"Swaraj",city:"Ahmedabad",contact:"9825866625"},{name:"Yogi",company:"Yogi hardware gota",city:"Ahmedabad",contact:"9377970101"},{name:"Arihant",company:"Arihant",city:"Ahmedabad",contact:"9429600522"},{name:"Murtuza",company:"Saifee enterprise",city:"Ahmedabad",contact:"9879519272"}]},
+  {name:"Gasket rubber",cat:"Hardware & Misc",prices:{},vendors:[{name:"Anmol bhai",company:"Bhawana group",city:"Ahmedabad",contact:"9825030113"}]},
+  {name:"Game table accessories",cat:"Hardware & Misc",prices:{},vendors:[{name:"World of sports",company:"World of sports",city:"Ahmedabad",contact:"8866262806"}]},
+  {name:"Cane roll",cat:"Cane & Rope",prices:{},vendors:[{name:"Shaunak",company:"Rjt impex",city:"Ahmedabad",contact:"9601410261"},{name:"Global engineering",company:"Global engineering",city:"Ahmedabad",contact:"9227193485"}]},
+  {name:"Rope",cat:"Cane & Rope",prices:{},vendors:[{name:"AR traders",company:"AR traders",city:"Ahmedabad",contact:"9016548880"},{name:"Rope dealer",company:"Rope dealer",city:"Ahmedabad",contact:"8490055530"}]},
+  {name:"Danish paper chord",cat:"Cane & Rope",prices:{},vendors:[{name:"Contact",company:"-",city:"Bangalore",contact:"9886118800"}]},
+];
+
+const EMBEDDED_PROCESSES = [
+  {name:"PVD",type:"surface",prices:{},providers:[{name:"Raju bhai AR PVD",contact:"7016702993"}]},
+  {name:"Power Coating",type:"surface",prices:{},providers:[{name:"Chandradeep powder coating",contact:"9426519420"},{name:"Jayesh bhai",contact:"8200607380"},{name:"Paresh bhai powder coating",contact:"9825615029"}]},
+  {name:"Laser cutting (wood)",type:"cutting",prices:{},providers:[{name:"Parth Laser Art studio",contact:"7778912911"}]},
+  {name:"Laser cutting (acrylic)",type:"cutting",prices:{time:"10/-"},providers:[{name:"Parth Laser Art studio",contact:"7778912911"}]},
+  {name:"Laser cutting (metal)",type:"cutting",prices:{},providers:[{name:"Kamlesh bhai Tatsat laser cutting",contact:"9998699535"},{name:"Pintu bhai",contact:"9427037716"}]},
+  {name:"CNC (wood)",type:"cnc",prices:{},providers:[{name:"Pintu bhai",contact:"9427037716"},{name:"Shailesh bhai",contact:"9727889411"},{name:"Kaushik",contact:"9723111657"}]},
+  {name:"CNC (metal) milling",type:"cnc",prices:{},providers:[{name:"Hardik jalaram milling",contact:""}]},
+  {name:"Lathe (wood)",type:"lathe",prices:{},providers:[{name:"Ghanshyam bhai",contact:"8905580694"}]},
+  {name:"Lathe (metal)",type:"lathe",prices:{},providers:[{name:"Kanu bhai",contact:"9998000128"}]},
+  {name:"Welding Aluminium",type:"welding",prices:{},providers:[{name:"Manish vihaan steel",contact:"9974644661"}]},
+  {name:"Welding SS",type:"welding",prices:{},providers:[{name:"Manish vihaan steel",contact:"9974644661"}]},
+  {name:"Welding MS",type:"welding",prices:{},providers:[{name:"Manish vihaan steel",contact:"9974644661"}]},
+  {name:"Welding Brass",type:"welding",prices:{},providers:[{name:"Manish vihaan steel",contact:"9974644661"}]},
+  {name:"Buffing",type:"finish",prices:{},providers:[{name:"Himmat bhai",contact:"9377986509"},{name:"Ishwarlal metal buffing",contact:"9725790584"},{name:"Mitesh (himmat bhai labour)",contact:""}]},
+  {name:"Polishing",type:"finish",prices:{},providers:[{name:"Shyamraj",contact:"9662480439"},{name:"Mohan kaka",contact:"8128682741"},{name:"Brijesh",contact:"9327568411"}]},
+  {name:"Rug making — viscose silk 4000gsm",type:"textile",prices:{sqft:"375/-"},providers:[{name:"Saurav (VSK Rugs Mumbai)",contact:"9335407306"}]},
+  {name:"Rug making — NZ wool 4000gsm",type:"textile",prices:{sqft:"350/-"},providers:[{name:"Saurav (VSK Rugs Mumbai)",contact:"9335507306"}]},
+  {name:"Rug making — blended 2500gsm",type:"textile",prices:{sqft:"230/-"},providers:[{name:"Saurav (VSK Rugs Mumbai)",contact:"9335607306"}]},
+  {name:"Rug making — NZ wool 3500gsm",type:"textile",prices:{sqft:"295/-"},providers:[{name:"Saurav (VSK Rugs Mumbai)",contact:"9335707306"}]},
+  {name:"Upholstery",type:"textile",prices:{},providers:[{name:"Vinod bhai",contact:"6353390902"},{name:"Nattu kaka",contact:"9825036071"}]},
+  {name:"Stone Carving",type:"cnc",prices:{},providers:[{name:"Kishan bhai",contact:"9376949988"},{name:"Pradeep bhai / Amit bhai",contact:""}]},
+  {name:"Stone CNC",type:"cnc",prices:{},providers:[{name:"Shiva",contact:"9825555138"},{name:"Jignesh",contact:"9426857470"}]},
+  {name:"Wood carving",type:"cnc",prices:{},providers:[{name:"Abhijeet",contact:"9974300708"}]},
+  {name:"Wood work (chair)",type:"service",prices:{},providers:[{name:"Ashok mewara",contact:"9426556315"}]},
+  {name:"Wood work",type:"service",prices:{},providers:[{name:"Kushal / brother Jasraj",contact:"8488838182"}]},
+  {name:"Cane/rope work (weaving)",type:"service",prices:{},providers:[{name:"Arvind bhai",contact:"9327035922"},{name:"Raju bhai / Rishi (son)",contact:"9824261830"}]},
+  {name:"General labour (civil work)",type:"service",prices:{},providers:[{name:"Amar singh",contact:"9558178726"}]},
+  {name:"AC repair",type:"service",prices:{},providers:[{name:"In search",contact:""}]},
+  {name:"Laptop / Printer repair",type:"service",prices:{},providers:[{name:"Star laptop repair",contact:"9909104777"},{name:"Deepak Rythym house",contact:"7728991589"}]},
+  {name:"Electrical",type:"service",prices:{},providers:[{name:"Dilip via Chetan",contact:"6354071643"},{name:"Sanju computer repair",contact:""}]},
+  {name:"Transport",type:"service",prices:{},providers:[{name:"Chetan patel (True Value Logistics)",contact:"9879509332"},{name:"",contact:"7043392036"}]},
+  {name:"Loading / Unloading labour",type:"service",prices:{},providers:[{name:"Rakesh bhai",contact:"9081785442"}]},
+];
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let materials = [];
+let processes = [];
+let saved = [];
+let activeTab = 'materials';
+let dataLoaded = false;
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+function loadFromCSV() {
+  materials = EMBEDDED_MATERIALS.map((m,i) => ({...m, id:'m'+i}));
+  processes = EMBEDDED_PROCESSES.map((p,i) => ({...p, id:'p'+i}));
+  dataLoaded = true;
+  populateCatFilter();
+  document.getElementById('configPanel').classList.remove('open');
+  setStatus('ok', `Data loaded — ${materials.length} materials, ${processes.length} processes`);
+  liveSearch();
+  showToast('Data loaded');
+}
+
+/* ══════════════════════════════════════════
+   GOOGLE SHEETS
+══════════════════════════════════════════ */
+async function connectSheet() {
+  const id  = document.getElementById('sheetId').value.trim();
+  const key = document.getElementById('apiKey').value.trim();
+  if (!id || !key) { showToast('Enter Sheet ID + API Key'); return; }
+  setStatus('loading', 'Fetching from Google Sheets…');
+  try {
+    const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${id}/values/Sheet1?key=${key}`);
+    if (!res.ok) throw new Error(`API ${res.status}`);
+    const rows = (await res.json()).values || [];
+    parseSheetRows(rows);
+    document.getElementById('configPanel').classList.remove('open');
+    setStatus('ok', `Connected — ${materials.length} materials, ${processes.length} processes`);
+    liveSearch();
+  } catch(e) {
+    setStatus('error', 'Connection failed: ' + e.message);
+  }
+}
+
+function parseSheetRows(rows) {
+  materials = []; processes = [];
+  for (let i = 2; i < rows.length; i++) {
+    const r = rows[i]; while(r.length < 35) r.push('');
+    const matName = r[0]?.trim();
+    if (matName) {
+      const vendors = [];
+      [[5,6,7,8],[9,10,11,12],[13,14,15,16]].forEach(([n,ci,co,ct]) => {
+        if(r[n]?.trim()) vendors.push({name:r[n].trim(),city:r[ci]?.trim()||'',company:r[co]?.trim()||'',contact:r[ct]?.trim()||''});
+      });
+      const prices = {};
+      if(r[1]?.trim()&&r[1].trim()!=='-') prices.cft = r[1].trim();
+      if(r[2]?.trim()&&r[2].trim()!=='-') prices.sqft = r[2].trim();
+      if(r[3]?.trim()&&r[3].trim()!=='-') prices.kg = r[3].trim();
+      if(r[4]?.trim()&&r[4].trim()!=='-') prices.ft = r[4].trim();
+      const n = matName.toLowerCase();
+      const cat = n.includes('ss ')||n.includes('ms ')||n.includes('brass')||n.includes('steel')||n.includes('pipe')||n.includes('rod') ? 'Metal'
+        : n.includes('ash')||n.includes('pine')||n.includes('teak')||n.includes('walnut')||n.includes('ply')||n.includes('mdf')||n.includes('veneer')||n.includes('wood')||n.includes('block board') ? 'Wood'
+        : n.includes('glass')||n.includes('mirror') ? 'Glass'
+        : n.includes('acrylic') ? 'Acrylic'
+        : n.includes('fabric')||n.includes('vinyl')||n.includes('canvas')||n.includes('sticker')||n.includes('frosted')||n.includes('print') ? 'Fabric & Print'
+        : n.includes('stone')||n.includes('granite') ? 'Stone'
+        : n.includes('cane')||n.includes('rope')||n.includes('danish') ? 'Cane & Rope'
+        : n.includes('hardware')||n.includes('gasket')||n.includes('packing') ? 'Hardware & Misc'
+        : n.includes('polish')||n.includes('paint') ? 'Finish' : 'Other';
+      materials.push({id:'m'+i, name:matName, cat, prices, vendors});
+    }
+    const proc = r[19]?.trim();
+    if (proc) {
+      const providers = [];
+      [[22,23],[24,25],[26,27],[28,29]].forEach(([n,c]) => {
+        if(r[n]?.trim()) providers.push({name:r[n].trim(), contact:r[c]?.trim()||''});
+      });
+      const prices = {};
+      if(r[20]?.trim()&&r[20].trim()!=='-') prices.sqft = r[20].trim();
+      if(r[21]?.trim()&&r[21].trim()!=='-') prices.time = r[21].trim();
+      processes.push({id:'p'+i, name:proc, type:'service', prices, providers});
+    }
+  }
+  dataLoaded = true;
+  populateCatFilter();
+}
+
+/* ══════════════════════════════════════════
+   TABS
+══════════════════════════════════════════ */
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tab-materials').classList.toggle('active', tab==='materials');
+  document.getElementById('tab-processes').classList.toggle('active', tab==='processes');
+  document.getElementById('searchRowMat').style.display = tab==='materials' ? 'flex' : 'none';
+  document.getElementById('searchRowProc').style.display = tab==='processes' ? 'flex' : 'none';
+  liveSearch();
+}
+
+function populateCatFilter() {
+  const cats = [...new Set(materials.map(m => m.cat))].sort();
+  document.getElementById('matCat').innerHTML =
+    '<option value="">All Categories</option>' + cats.map(c => `<option>${x(c)}</option>`).join('');
+}
+
+/* ══════════════════════════════════════════
+   SEARCH
+══════════════════════════════════════════ */
+function liveSearch() {
+  if (!dataLoaded) return;
+  if (activeTab === 'materials') renderMaterials(filterMaterials());
+  else renderProcesses(filterProcesses());
+}
+function clearSearch() {
+  ['matName','matVendor','procName','procProvider'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('matCat').value = '';
+  liveSearch();
+}
+
+function filterMaterials() {
+  const name = document.getElementById('matName').value.trim().toLowerCase();
+  const cat  = document.getElementById('matCat').value.toLowerCase();
+  const vend = document.getElementById('matVendor').value.trim().toLowerCase();
+  return materials.filter(m =>
+    (!name || m.name.toLowerCase().includes(name)) &&
+    (!cat  || m.cat.toLowerCase() === cat) &&
+    (!vend || m.vendors.some(v => (v.company||v.name).toLowerCase().includes(vend) || v.name.toLowerCase().includes(vend)))
+  );
+}
+function filterProcesses() {
+  const name = document.getElementById('procName').value.trim().toLowerCase();
+  const prov = document.getElementById('procProvider').value.trim().toLowerCase();
+  return processes.filter(p =>
+    (!name || p.name.toLowerCase().includes(name)) &&
+    (!prov || p.providers.some(pr => pr.name.toLowerCase().includes(prov)))
+  );
+}
+
+/* ══════════════════════════════════════════
+   RENDER MATERIALS
+══════════════════════════════════════════ */
+function renderMaterials(list) {
+  const area = document.getElementById('resultsArea');
+  if (!list.length) { area.innerHTML = emptyState('No materials found', 'Try a different search.'); return; }
+
+  const cards = list.map(m => {
+    const priceHTML = buildPriceHTML(m.prices);
+    const vendorRows = m.vendors.map((v, i) => {
+      const co = v.company && v.company !== '-' ? v.company : v.name;
+      const contact = cleanContact(v.contact);
+      const callBtns = contact ? `<a href="tel:${contact}" class="btn-call">📞 Call</a><a href="https://wa.me/91${contact.replace(/\D/g,'').slice(-10)}" target="_blank" class="btn-wa">WhatsApp</a>` : '';
+      return `<div class="vendor-row">
+        <span class="v-num">${i+1}</span>
+        <div class="v-info">
+          <div class="v-company">${x(co)}</div>
+          ${v.name && v.name !== co ? `<div class="v-name">${x(v.name)}</div>` : ''}
+          ${v.city ? `<div class="v-city">📍 ${x(v.city)}</div>` : ''}
+          ${contact ? `<div class="v-city" style="color:var(--rust);font-weight:500">📱 ${x(contact)}</div>` : ''}
+        </div>
+        <div class="v-actions">${callBtns}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="mat-card">
+      <div class="card-head">
+        <div>
+          <div class="mat-name">${x(m.name)}</div>
+          <span class="cat-tag">${x(m.cat)}</span>
+        </div>
+        <div class="price-col">${priceHTML}</div>
+      </div>
+      <div class="vendor-list">${vendorRows}</div>
+    </div>`;
+  }).join('');
+
+  area.innerHTML = `
+    <div class="r-bar">
+      <div class="r-count"><strong>${list.length}</strong> Material${list.length!==1?'s':''}</div>
+    </div>
+    <div class="card-list">${cards}</div>`;
+}
+
+function buildPriceHTML(prices) {
+  const labels = {cft:'/ cu ft', sqft:'/ sq ft', kg:'/ kg', ft:'/ ft', time:'/ unit'};
+  const entries = Object.entries(prices).filter(([,v]) => v && v !== '-');
+  if (!entries.length) return `<span class="no-price">Call for price</span>`;
+  return entries.map(([k,v]) =>
+    `<div class="price-row"><span class="price-unit">${labels[k]||k}</span><span class="price-val">₹${v.replace('/-','')}</span></div>`
+  ).join('');
+}
+
+/* ══════════════════════════════════════════
+   RENDER PROCESSES
+══════════════════════════════════════════ */
+function renderProcesses(list) {
+  const area = document.getElementById('resultsArea');
+  if (!list.length) { area.innerHTML = emptyState('No processes found', 'Try a different search.'); return; }
+
+  const typeColors = {surface:'#5b3a8a',cutting:'#1a5f7a',cnc:'#2b5d2b',lathe:'#7a3a1a',welding:'#4a3000',finish:'#1a4a5a',textile:'#6b3a5a',service:'#3a3a3a'};
+
+  const cards = list.map(p => {
+    const priceHTML = buildPriceHTML(p.prices);
+    const bg = typeColors[p.type] || '#3a3a3a';
+    const provRows = p.providers.filter(pr => pr.name && pr.name.trim()).map((pr, i) => {
+      const contact = cleanContact(pr.contact);
+      const callBtns = contact ? `<a href="tel:${contact}" class="btn-call">📞 Call</a><a href="https://wa.me/91${contact.replace(/\D/g,'').slice(-10)}" target="_blank" class="btn-wa">WhatsApp</a>` : '';
+      return `<div class="provider-row">
+        <div class="v-info">
+          <div class="pv-name">${x(pr.name)}</div>
+          ${contact ? `<div class="v-city" style="color:var(--rust);font-weight:500">📱 ${x(contact)}</div>` : ''}
+        </div>
+        <div class="v-actions">${callBtns}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="proc-card" style="border-left:3px solid ${bg}">
+      <div class="proc-head">
+        <div>
+          <div class="proc-name">${x(p.name)}</div>
+          <span class="proc-tag" style="background:${bg}">${x(p.type)}</span>
+        </div>
+        <div class="price-col">${priceHTML}</div>
+      </div>
+      <div class="vendor-list">${provRows}</div>
+    </div>`;
+  }).join('');
+
+  area.innerHTML = `
+    <div class="r-bar">
+      <div class="r-count"><strong>${list.length}</strong> Process${list.length!==1?'es':''}</div>
+    </div>
+    <div class="card-list">${cards}</div>`;
+}
+
+/* ══════════════════════════════════════════
+   SAVED PAGE
+══════════════════════════════════════════ */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.bnav').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('bnav-' + name).classList.add('active');
+  if (name === 'saved') renderSaved();
+  window.scrollTo(0, 0);
+}
+
+function renderSaved() {
+  const el = document.getElementById('savedContent');
+  el.innerHTML = `<div class="empty"><div class="empty-label">Coming Soon</div><div class="empty-title">Shortlist</div><div class="empty-sub">Save vendors directly from search results. Feature coming in next update.</div></div>`;
+}
+
+/* ══════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════ */
+function toggleConfig() {
+  document.getElementById('configPanel').classList.toggle('open');
+}
+
+/* ══════════════════════════════════════════
+   STATUS & TOAST
+══════════════════════════════════════════ */
+function setStatus(type, msg) {
+  const b = document.getElementById('statusBar');
+  b.className = 'status' + (type==='error' ? ' error' : '');
+  b.textContent = msg;
+  if (type !== 'error') setTimeout(() => b.classList.add('hidden'), 5000);
+}
+let _tt;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ══════════════════════════════════════════
+   UTILS
+══════════════════════════════════════════ */
+function emptyState(title, sub) {
+  return `<div class="empty" style="margin-top:20px"><div class="empty-label">No Results</div><div class="empty-title">${title}</div><div class="empty-sub">${sub}</div></div>`;
+}
+function cleanContact(c) {
+  if (!c) return '';
+  // Take first number if multiple are listed
+  const match = c.match(/[\d\s]{7,}/);
+  return match ? match[0].trim() : c.trim();
+}
+function x(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* Auto-load embedded data on start */
+loadFromCSV();
+</script>
+</body>
+</html>
