@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Daftar">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+<title>Daftar Connect</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sand:#d4b896;--rust:#c4390a;--crimson:#b01a0e;--forest:#2b3d2b;
+  --black:#080806;--white:#f8f6f2;--paper:#f2efe9;
+  --dim:rgba(8,8,6,.06);--line:rgba(8,8,6,.12);--muted:rgba(8,8,6,.42);
+  --fh:'Barlow Condensed','Arial Narrow',sans-serif;
+  --fb:'Barlow',Helvetica,Arial,sans-serif;
+  --hh:52px;--nh:60px;--sb:env(safe-area-inset-bottom,0px);--t:.14s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--fb);background:var(--paper);color:var(--black);min-height:100vh;font-size:14px;line-height:1.5;padding-top:var(--hh);padding-bottom:calc(var(--nh) + var(--sb) + 60px);-webkit-font-smoothing:antialiased}
+button{cursor:pointer;font-family:var(--fb);border:none;background:none}
+input,select,textarea{font-family:var(--fb)}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+
+/* ── HEADER ── */
+header{position:fixed;top:0;left:0;right:0;height:var(--hh);background:var(--black);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:300;border-bottom:1px solid rgba(255,255,255,.07)}
+.logo{font-family:var(--fh);font-size:1.1rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--white)}
+.logo em{color:var(--sand);font-style:normal}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.hdr-btn{font-family:var(--fh);font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);padding:6px 10px;border:1px solid rgba(255,255,255,.1);transition:var(--t)}
+.hdr-btn:hover{color:var(--sand);border-color:rgba(212,184,150,.3)}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--nh)+var(--sb));padding-bottom:var(--sb);background:var(--black);display:flex;z-index:300;border-top:1px solid rgba(255,255,255,.07)}
+.bnav{flex:1;background:none;border:none;color:rgba(255,255,255,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:var(--fh);font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;transition:var(--t);position:relative;padding:0}
+.bnav .ico{font-size:1.15rem;line-height:1}
+.bnav.active{color:var(--sand)}
+.bnav.active::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1.5px;background:var(--sand)}
+.bnav-badge{position:absolute;top:7px;right:calc(50% - 22px);background:var(--rust);color:#fff;border-radius:2px;font-size:.55rem;font-weight:700;min-width:15px;height:15px;display:flex;align-items:center;justify-content:center;padding:0 3px;letter-spacing:0}
+
+/* ── STATUS ── */
+.status{background:var(--forest);color:var(--white);padding:8px 16px;font-family:var(--fh);font-size:.64rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.status.error{background:var(--crimson)}.status.hidden{display:none}
+
+/* ── PAGES ── */
+.page{display:none}
+.page.active{display:block;animation:up .22s ease}
+@keyframes up{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.wrap{max-width:1060px;margin:0 auto;padding:0 16px}
+
+/* ── HERO ── */
+.hero{background:var(--black);padding:26px 0 0;position:relative}
+.hero::after{content:'';display:block;height:2px;background:linear-gradient(90deg,var(--rust),var(--sand) 40%,transparent)}
+.hero-label{font-family:var(--fh);font-size:.6rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--sand);opacity:.7;margin-bottom:6px}
+.hero-title{font-family:var(--fh);font-size:clamp(1.8rem,5vw,3rem);font-weight:700;text-transform:uppercase;color:var(--white);line-height:.95;margin-bottom:20px}
+.hero-title em{color:var(--rust);font-style:normal}
+
+/* ── TABS ── */
+.tab-bar{display:flex;border-top:1px solid rgba(255,255,255,.09)}
+.tab-btn{flex:1;font-family:var(--fh);font-size:.68rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.32);padding:12px 0;border-bottom:2px solid transparent;transition:var(--t);background:none;border-top:none;border-left:none;border-right:none}
+.tab-btn:first-child{border-right:1px solid rgba(255,255,255,.09)}
+.tab-btn.active{color:var(--sand);border-bottom-color:var(--rust)}
+
+/* ── SEARCH ── */
+.search-bar{background:var(--black)}
+.search-row{display:flex;border-top:1px solid rgba(255,255,255,.07);flex-wrap:wrap}
+.search-field{flex:1;min-width:140px;padding:10px 13px;border-right:1px solid rgba(255,255,255,.07)}
+.search-field:last-child{border-right:none}
+.s-label{display:block;font-family:var(--fh);font-size:.54rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:3px}
+.s-input,.s-select{width:100%;background:transparent;border:none;color:var(--white);font-family:var(--fb);font-size:.9rem;font-weight:300;padding:0;outline:none;-webkit-appearance:none}
+.s-input::placeholder{color:rgba(255,255,255,.16)}
+.s-select option{background:var(--black)}
+.search-actions{display:flex;border-top:1px solid rgba(255,255,255,.07)}
+.btn-go{flex:1;background:var(--rust);color:var(--white);font-family:var(--fh);font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:11px;transition:var(--t);border-right:1px solid rgba(255,255,255,.1)}
+.btn-go:active{background:var(--crimson)}
+.btn-clr{background:transparent;color:rgba(255,255,255,.28);font-family:var(--fh);font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:11px 14px;transition:var(--t)}
+.btn-clr:active{color:var(--white)}
+
+/* ── CONFIG ── */
+.config-strip{background:var(--forest);border-bottom:2px solid var(--rust);display:none}
+.config-strip.open{display:block}
+.config-inner{padding:18px 16px}
+.cfg-title{font-family:var(--fh);font-size:.64rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:12px}
+.cfg-fields{display:flex;flex-direction:column;gap:9px;margin-bottom:11px}
+.cfg-label{display:block;font-family:var(--fh);font-size:.56rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:3px}
+.cfg-input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);color:var(--white);font-family:var(--fb);font-size:.9rem;font-weight:300;padding:8px 10px;outline:none;transition:var(--t)}
+.cfg-input:focus{border-color:var(--sand)}
+.cfg-input::placeholder{color:rgba(255,255,255,.2)}
+.cfg-btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn-connect{background:var(--rust);color:var(--white);font-family:var(--fh);font-size:.66rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:9px 18px;flex:1;transition:var(--t)}
+.btn-connect:active{background:var(--crimson)}
+.btn-demo-load{background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.5);font-family:var(--fh);font-size:.64rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:9px 14px;transition:var(--t)}
+.btn-demo-load:active{border-color:var(--sand);color:var(--sand)}
+.cfg-hint{font-size:.7rem;color:rgba(255,255,255,.28);margin-top:10px;line-height:1.7;font-weight:300}
+.cfg-hint code{background:rgba(0,0,0,.3);padding:1px 5px;font-family:monospace;font-size:.66rem}
+
+/* ── RESULTS ── */
+.results{padding:18px 0 36px}
+.r-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap}
+.r-count{font-family:var(--fh);font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.r-count strong{color:var(--black)}
+
+/* ── MATERIAL / PROCESS CARDS ── */
+.card-list{display:flex;flex-direction:column;gap:1px;background:var(--line)}
+.mat-card,.proc-card{background:var(--white)}
+.card-head{display:grid;grid-template-columns:1fr auto;gap:10px;padding:12px 14px 9px;border-bottom:1px solid var(--line);align-items:start}
+.mat-name,.proc-name{font-weight:600;font-size:.93rem;letter-spacing:-.01em;margin-bottom:4px}
+.cat-tag{display:inline-block;background:var(--forest);color:var(--white);font-family:var(--fh);font-size:.54rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px}
+.proc-tag{display:inline-block;color:var(--white);font-family:var(--fh);font-size:.54rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px}
+.price-col{text-align:right;flex-shrink:0}
+.price-row{display:flex;align-items:baseline;gap:4px;justify-content:flex-end;margin-bottom:1px}
+.price-unit{font-family:var(--fh);font-size:.54rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.price-val{font-weight:600;font-size:.88rem}
+.no-price{font-size:.72rem;color:var(--muted);font-weight:300;font-style:italic}
+
+/* vendor rows */
+.vendor-list{display:flex;flex-direction:column}
+.vendor-row,.provider-row{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--dim);padding:9px 14px}
+.vendor-row:last-child,.provider-row:last-child{border-bottom:none}
+.v-num{font-family:var(--fh);font-size:.58rem;font-weight:700;color:var(--muted);min-width:18px}
+.v-info{flex:1;min-width:0}
+.v-company{font-weight:500;font-size:.83rem}
+.v-name{font-size:.72rem;color:var(--muted);font-weight:300}
+.v-city{font-size:.7rem;color:var(--muted);font-weight:300}
+.v-contact{font-size:.72rem;color:var(--rust);font-weight:500;margin-top:1px}
+.v-actions{display:flex;gap:5px;flex-shrink:0;align-items:center}
+.btn-call{background:var(--forest);color:var(--white);font-family:var(--fh);font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 9px;transition:var(--t);white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
+.btn-call:active{background:#1a2a1a}
+.btn-wa{background:var(--black);color:var(--white);font-family:var(--fh);font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 9px;transition:var(--t);white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
+.btn-wa:active{background:var(--rust)}
+.btn-fav{background:none;border:1px solid var(--line);color:var(--muted);font-size:.9rem;width:30px;height:30px;display:flex;align-items:center;justify-content:center;transition:var(--t);flex-shrink:0}
+.btn-fav.saved{background:var(--rust);border-color:var(--rust);color:#fff}
+.btn-fav:active{transform:scale(.9)}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:52px 20px;border:1px solid var(--line);background:var(--white);margin-top:16px}
+.empty-label{font-family:var(--fh);font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.empty-title{font-family:var(--fh);font-size:1.4rem;font-weight:700;text-transform:uppercase;margin-bottom:5px}
+.empty-sub{font-size:.8rem;color:var(--muted);font-weight:300}
+
+/* ── FAVORITES PAGE ── */
+.fav-page-header{padding:24px 0 16px;border-bottom:2px solid var(--black);margin-bottom:20px}
+.fav-eyebrow{font-family:var(--fh);font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--rust);margin-bottom:5px}
+.fav-title{font-family:var(--fh);font-size:clamp(1.4rem,4vw,2.2rem);font-weight:700;text-transform:uppercase;line-height:1}
+.fav-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn-pdf{background:var(--black);color:var(--white);font-family:var(--fh);font-size:.66rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:11px 20px;transition:var(--t);display:flex;align-items:center;gap:7px}
+.btn-pdf:active{background:var(--rust)}
+.btn-clear-fav{background:transparent;border:1px solid var(--line);color:var(--muted);font-family:var(--fh);font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:11px 16px;transition:var(--t)}
+.btn-clear-fav:active{border-color:var(--crimson);color:var(--crimson)}
+
+/* fav item */
+.fav-item{background:var(--white);border-bottom:1px solid var(--line);padding:12px 14px;display:flex;align-items:flex-start;gap:12px}
+.fav-item:last-child{border-bottom:none}
+.fav-item-info{flex:1;min-width:0}
+.fav-item-name{font-weight:600;font-size:.9rem;margin-bottom:2px}
+.fav-item-sub{font-size:.75rem;color:var(--muted);font-weight:300;line-height:1.5}
+.fav-item-contact{font-size:.72rem;color:var(--rust);font-weight:500;margin-top:3px}
+.fav-item-note{font-size:.75rem;color:var(--muted);margin-top:4px;font-style:italic}
+.fav-note-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--black);font-family:var(--fb);font-size:.78rem;font-weight:300;padding:4px 0;outline:none;margin-top:5px;font-style:italic}
+.fav-note-input::placeholder{color:rgba(8,8,6,.25)}
+.btn-unfav{background:none;border:1px solid var(--line);color:var(--muted);font-size:.8rem;width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--t)}
+.btn-unfav:active{background:var(--crimson);border-color:var(--crimson);color:#fff}
+.fav-type-tag{display:inline-block;font-family:var(--fh);font-size:.52rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:1px 6px;margin-bottom:3px}
+.fav-type-mat{background:var(--forest);color:#fff}
+.fav-type-proc{background:var(--rust);color:#fff}
+
+/* ── ADD ENTRY PAGE ── */
+.add-page-header{padding:24px 0 16px;border-bottom:2px solid var(--black);margin-bottom:20px}
+.add-eyebrow{font-family:var(--fh);font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--rust);margin-bottom:5px}
+.add-title{font-family:var(--fh);font-size:clamp(1.4rem,4vw,2.2rem);font-weight:700;text-transform:uppercase;line-height:1}
+
+.add-type-toggle{display:flex;margin-bottom:20px;border:1px solid var(--line);background:var(--white)}
+.type-toggle-btn{flex:1;font-family:var(--fh);font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:12px;color:var(--muted);background:none;border-right:1px solid var(--line);transition:var(--t)}
+.type-toggle-btn:last-child{border-right:none}
+.type-toggle-btn.active{background:var(--black);color:var(--white)}
+
+.form-section{background:var(--white);border:1px solid var(--line);padding:18px;margin-bottom:12px}
+.form-section-title{font-family:var(--fh);font-size:.64rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.form-grid{grid-template-columns:1fr}}
+.form-field{display:flex;flex-direction:column;gap:4px}
+.form-field.full{grid-column:1/-1}
+.f-label{font-family:var(--fh);font-size:.56rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.f-input,.f-select,.f-textarea{background:var(--paper);border:1px solid var(--line);color:var(--black);font-family:var(--fb);font-size:.88rem;font-weight:400;padding:9px 10px;outline:none;transition:var(--t);width:100%;-webkit-appearance:none}
+.f-input:focus,.f-select:focus,.f-textarea:focus{border-color:var(--rust);background:var(--white)}
+.f-input::placeholder,.f-textarea::placeholder{color:rgba(8,8,6,.25)}
+.f-textarea{resize:vertical;min-height:72px}
+
+.vendor-block{background:var(--paper);border:1px solid var(--line);padding:14px;margin-bottom:10px;position:relative}
+.vendor-block-title{font-family:var(--fh);font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.btn-remove-vendor{position:absolute;top:10px;right:10px;background:none;color:var(--muted);font-size:.7rem;padding:2px 6px;border:1px solid var(--line);transition:var(--t);font-family:var(--fh);font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.btn-remove-vendor:active{color:var(--crimson);border-color:var(--crimson)}
+.btn-add-vendor{background:transparent;border:1px dashed var(--line);color:var(--muted);font-family:var(--fh);font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:10px;width:100%;transition:var(--t);margin-top:6px}
+.btn-add-vendor:active{border-color:var(--rust);color:var(--rust)}
+
+.btn-save-entry{width:100%;background:var(--rust);color:var(--white);font-family:var(--fh);font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:14px;transition:var(--t);margin-bottom:24px}
+.btn-save-entry:active{background:var(--crimson)}
+
+/* ── IMAGE UPLOAD ── */
+.img-upload-area{border:2px dashed var(--line);padding:18px;text-align:center;cursor:pointer;transition:var(--t);position:relative;background:var(--paper)}
+.img-upload-area:hover,.img-upload-area.drag{border-color:var(--rust);background:#fdf5f0}
+.img-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-upload-label{font-family:var(--fh);font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.img-upload-sub{font-size:.72rem;color:var(--muted);font-weight:300;margin-top:3px}
+.img-preview-wrap{position:relative;display:inline-block;margin-top:10px}
+.img-preview{width:100%;max-width:280px;max-height:180px;object-fit:cover;display:block;border:1px solid var(--line)}
+.img-clear{position:absolute;top:4px;right:4px;background:var(--crimson);color:#fff;border:none;width:22px;height:22px;font-size:.8rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+/* image buttons */
+.img-btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.img-btn-upload{background:var(--black);color:var(--white);font-family:var(--fh);font-size:.65rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:11px 16px;transition:var(--t);flex:1;min-width:140px}
+.img-btn-upload:active{background:var(--rust)}
+.img-btn-url{background:transparent;border:1px solid var(--line);color:var(--black);font-family:var(--fh);font-size:.65rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:11px 16px;transition:var(--t);flex:1;min-width:140px}
+.img-btn-url:active,.img-btn-url.active{background:var(--forest);color:var(--white);border-color:var(--forest)}
+/* card image */
+.card-img-wrap{width:80px;min-width:80px;height:80px;overflow:hidden;border-right:1px solid var(--line);flex-shrink:0}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.card-img-ph{width:80px;min-width:80px;height:80px;background:var(--dim);border-right:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:var(--muted);flex-shrink:0}
+.card-head-inner{flex:1;min-width:0;padding:12px 14px 9px}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(8,8,6,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex;animation:fadeIn .18s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--white);width:100%;max-width:480px;max-height:80vh;overflow-y:auto}
+.modal-head{background:var(--black);padding:16px 18px;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:var(--fh);font-size:.78rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--sand)}
+.modal-close{background:none;color:rgba(255,255,255,.4);font-size:1.1rem;transition:var(--t)}
+.modal-close:hover{color:var(--white)}
+.modal-body{padding:18px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(var(--nh)+var(--sb)+10px);left:50%;transform:translateX(-50%) translateY(8px);background:var(--forest);color:var(--white);padding:9px 18px;font-family:var(--fh);font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;z-index:9999;opacity:0;transition:all .2s ease;pointer-events:none;white-space:nowrap;max-width:calc(100vw - 24px);overflow:hidden;text-overflow:ellipsis}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── IMAGE MODAL ── */
+.img-modal-overlay{position:fixed;inset:0;background:rgba(8,8,6,.72);z-index:600;display:none;align-items:flex-end;justify-content:center}
+.img-modal-overlay.open{display:flex;animation:fadeIn .18s ease}
+.img-modal{background:var(--white);width:100%;max-width:520px;border-top:3px solid var(--rust)}
+.img-modal-head{background:var(--black);padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+.img-modal-title{font-family:var(--fh);font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--sand)}
+.img-modal-close{color:rgba(255,255,255,.4);font-size:1.1rem;padding:4px 8px;transition:var(--t)}
+.img-modal-close:active{color:var(--white)}
+.img-modal-body{padding:18px}
+.img-modal-preview{width:100%;max-height:200px;object-fit:cover;display:block;margin-bottom:12px;border:1px solid var(--line)}
+.img-modal-btns{display:flex;gap:8px;margin-bottom:12px}
+.img-modal-btn{flex:1;font-family:var(--fh);font-size:.66rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:12px 10px;transition:var(--t)}
+.img-modal-btn.primary{background:var(--black);color:var(--white)}
+.img-modal-btn.primary:active{background:var(--rust)}
+.img-modal-btn.secondary{background:transparent;border:1px solid var(--line);color:var(--black)}
+.img-modal-btn.secondary:active{border-color:var(--rust);color:var(--rust)}
+.img-modal-btn.danger{background:transparent;border:1px solid var(--crimson);color:var(--crimson)}
+.img-modal-btn.danger:active{background:var(--crimson);color:#fff}
+.img-modal-url{width:100%;background:var(--paper);border:1px solid var(--line);color:var(--black);font-family:var(--fb);font-size:.88rem;padding:9px 10px;outline:none;margin-top:8px;display:none}
+.img-modal-url:focus{border-color:var(--rust)}
+/* camera icon button on card */
+.btn-img-card{background:rgba(8,8,6,.55);color:var(--white);font-size:.75rem;padding:4px 7px;border:1px solid rgba(255,255,255,.2);transition:var(--t);position:absolute;bottom:4px;right:4px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.btn-img-card:active{background:var(--rust);border-color:var(--rust)}
+.card-img-ph-wrap{position:relative;width:80px;min-width:80px;height:80px;background:var(--dim);border-right:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.card-img-has-wrap{position:relative;width:80px;min-width:80px;height:80px;overflow:hidden;border-right:1px solid var(--line);flex-shrink:0}
+.card-img-has-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ── VENDOR-GROUPED MATERIAL CARDS ── */
+.vg-card{background:var(--white);border-bottom:2px solid var(--line);margin-bottom:2px}
+.vg-head{display:flex;align-items:flex-start;justify-content:space-between;padding:12px 14px 8px;gap:8px;background:var(--black)}
+.vg-head-info{flex:1;min-width:0}
+.vg-company{font-family:var(--fh);font-size:1rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--sand)}
+.vg-contact-name{font-size:.75rem;color:rgba(255,255,255,.5);font-weight:300;margin-top:1px}
+.vg-city{font-size:.7rem;color:rgba(255,255,255,.4);font-weight:300}
+.vg-phone{font-size:.75rem;color:var(--rust);font-weight:500;margin-top:2px}
+.vg-head-actions{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.vg-mat-count{font-family:var(--fh);font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:6px 14px;background:var(--paper);border-bottom:1px solid var(--line)}
+.vg-mat-list{display:flex;flex-direction:column}
+.vg-mat-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--dim)}
+.vg-mat-row:last-child{border-bottom:none}
+.vg-mat-img{width:40px;height:40px;object-fit:cover;border:1px solid var(--line);flex-shrink:0}
+.vg-mat-info{flex:1;min-width:0}
+.vg-mat-name{font-weight:500;font-size:.88rem;margin-bottom:2px}
+.vg-mat-price{font-size:.72rem;color:var(--rust);font-weight:500;margin-top:2px}
+
+/* ── VENDOR VIEW CARDS ── */
+.vv-card{background:var(--white);border-bottom:1px solid var(--line)}
+.vv-head{display:flex;align-items:flex-start;justify-content:space-between;padding:14px 14px 10px;gap:10px}
+.vv-info{flex:1;min-width:0}
+.vv-company{font-weight:600;font-size:1rem;letter-spacing:-.01em;margin-bottom:3px}
+.vv-person{font-size:.75rem;color:var(--muted);font-weight:300}
+.vv-city{font-size:.72rem;color:var(--muted);font-weight:300;margin-top:1px}
+.vv-contact{font-size:.75rem;color:var(--rust);font-weight:500;margin-top:2px}
+.vv-actions{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.vv-section{padding:10px 14px}
+.vv-section-label{font-family:var(--fh);font-size:.56rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.vv-chips{display:flex;flex-wrap:wrap;gap:5px}
+.vv-chip{font-family:var(--fh);font-size:.65rem;font-weight:600;letter-spacing:.06em;padding:4px 9px;border:1px solid var(--line);color:var(--black);background:var(--paper)}
+.vv-chip-mat{border-color:var(--forest);color:var(--forest)}
+.vv-chip-proc{border-color:var(--rust);color:var(--rust)}
+
+/* ── PRINT ── */
+@media print{
+  header,.bottom-nav,.search-bar,.tab-bar,.r-bar,.btn-call,.btn-wa,.btn-fav,.fav-actions,.toast,.config-strip,.status,.btn-unfav,.fav-note-input{display:none!important}
+  body{padding:0;background:white;font-size:11px}
+  .page{display:block!important}
+  #page-search{display:none!important}
+  #page-add{display:none!important}
+  .print-head{display:block!important}
+  .fav-item-note{display:block!important}
+}
+.print-head{display:none;padding:20px 0 14px;border-bottom:2px solid #000;margin-bottom:18px}
+.print-head h2{font-family:'Arial Narrow',Arial,sans-serif;font-size:1.5rem;text-transform:uppercase;letter-spacing:.05em}
+.print-head p{font-size:.78rem;color:#666;margin-top:3px}
+</style>
+</head>
+<body>
+
+<div class="status hidden" id="statusBar"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Daftar <em>Connect</em></div>
+  <div class="hdr-right">
+    <button class="hdr-btn" onclick="showPage('add')">+ Add</button>
+    <button class="hdr-btn" id="btnRefresh" onclick="refreshSheet()" style="display:none">↻ Sync</button>
+    <button class="hdr-btn" onclick="toggleConfig()">⚙ Sheet</button>
+  </div>
+</header>
+
+<!-- CONFIG STRIP -->
+<div class="config-strip" id="configPanel">
+  <div class="config-inner wrap">
+    <div class="cfg-title">Connect Google Sheets</div>
+
+    <!-- Step 1: Sheet ID + API Key for reading -->
+    <div class="cfg-fields">
+      <div><label class="cfg-label">Spreadsheet ID</label><input class="cfg-input" id="sheetId" placeholder="From your Sheet URL"></div>
+      <div><label class="cfg-label">API Key (for reading)</label><input class="cfg-input" id="apiKey" type="password" placeholder="Google Sheets API Key"></div>
+    </div>
+    <div class="cfg-btns">
+      <button class="btn-connect" onclick="connectSheet()">Load Sheet Data</button>
+      <button class="btn-demo-load" onclick="loadBuiltin()">Use Built-in Data</button>
+    </div>
+
+    <div style="height:1px;background:rgba(255,255,255,.1);margin:14px 0"></div>
+
+    <!-- Step 2: OAuth for writing -->
+    <div class="cfg-title" style="margin-bottom:8px">Enable Writing to Sheet</div>
+    <div style="font-size:.72rem;color:rgba(255,255,255,.45);font-weight:300;line-height:1.7;margin-bottom:10px">
+      Sign in with Google once to let the app add new items directly to your Sheet.
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-connect" id="btnSignIn" onclick="oauthSignIn()" style="flex:1">🔐 Sign in with Google</button>
+      <button class="btn-demo-load" id="btnSignOut" onclick="oauthSignOut()" style="display:none">Sign Out</button>
+    </div>
+    <div id="oauthStatus" style="margin-top:8px;font-size:.7rem;color:rgba(255,255,255,.35);font-weight:300"></div>
+  </div>
+</div>
+
+<!-- ══════ PAGE: SEARCH ══════ -->
+<div class="page active" id="page-search">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-label">Vendor & Process Library</div>
+      <h1 class="hero-title">Find <em>Anyone.</em></h1>
+    </div>
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-materials" onclick="switchTab('materials')">By Material</button>
+      <button class="tab-btn" id="tab-processes" onclick="switchTab('processes')">By Process</button>
+      <button class="tab-btn" id="tab-vendors" onclick="switchTab('vendors')">By Vendor</button>
+    </div>
+  </section>
+
+  <div class="search-bar">
+    <div class="wrap">
+      <div class="search-row" id="searchRowMat">
+        <div class="search-field"><label class="s-label">Material / Item</label><input class="s-input" id="matName" type="search" placeholder="Ash, Steel, Glass…" oninput="liveSearch()" autocomplete="off"></div>
+        <div class="search-field"><label class="s-label">Category</label><select class="s-select" id="matCat" onchange="liveSearch()"><option value="">All</option></select></div>
+        <div class="search-field"><label class="s-label">Vendor / Company</label><input class="s-input" id="matVendor" type="search" placeholder="Company or name…" oninput="liveSearch()" autocomplete="off"></div>
+      </div>
+      <div class="search-row" id="searchRowProc" style="display:none">
+        <div class="search-field"><label class="s-label">Process / Service</label><input class="s-input" id="procName" type="search" placeholder="Welding, CNC, Laser…" oninput="liveSearch()" autocomplete="off"></div>
+        <div class="search-field"><label class="s-label">Provider</label><input class="s-input" id="procProvider" type="search" placeholder="Provider name…" oninput="liveSearch()" autocomplete="off"></div>
+      </div>
+      <div class="search-row" id="searchRowVendor" style="display:none">
+        <div class="search-field"><label class="s-label">Vendor / Company Name</label><input class="s-input" id="vendorSearch" type="search" placeholder="Laxmi, Swamy, Iscon…" oninput="liveSearch()" autocomplete="off"></div>
+      </div>
+      <div class="search-actions">
+        <button class="btn-go" onclick="liveSearch()">Search</button>
+        <button class="btn-clr" onclick="clearSearch()">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="results">
+    <div class="wrap" id="resultsArea">
+      <div class="empty"><div class="empty-label">Daftar Connect</div><div class="empty-title">Ready</div><div class="empty-sub">Use built-in data or connect your Google Sheet.</div></div>
+    </div>
+  </section>
+</div>
+
+<!-- ══════ PAGE: FAVORITES ══════ -->
+<div class="page" id="page-fav">
+  <div class="wrap">
+    <div class="fav-page-header">
+      <div class="fav-eyebrow">Saved Contacts</div>
+      <h2 class="fav-title">Favourites</h2>
+      <div class="fav-actions">
+        <button class="btn-pdf" onclick="exportFavPDF()">↗ Export PDF Requirement Sheet</button>
+        <button class="btn-clear-fav" onclick="clearAllFavs()">Clear All</button>
+      </div>
+    </div>
+    <div class="print-head">
+      <h2>Daftar Connect — Vendor Requirement Sheet</h2>
+      <p id="printDate"></p>
+    </div>
+    <div id="favContent"></div>
+  </div>
+</div>
+
+<!-- ══════ PAGE: ADD ENTRY ══════ -->
+<div class="page" id="page-add">
+  <div class="wrap">
+    <div class="add-page-header">
+      <div class="add-eyebrow">Extend the Library</div>
+      <h2 class="add-title">Add New Entry</h2>
+    </div>
+
+    <div style="background:var(--forest);color:var(--white);padding:11px 14px;margin-bottom:16px;font-size:.78rem;font-weight:300;line-height:1.6;border-left:3px solid var(--sand)">
+      <strong style="font-family:var(--fh);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--sand)">How sync works</strong><br>
+      New entries appear in the app instantly. When saved, the row is <strong>copied to your clipboard</strong> — open your Google Sheet, go to the next empty row, and paste (Ctrl+V / ⌘V) to keep it in sync. To pull new rows <em>from</em> the Sheet into the app, tap <strong>↻ Sync</strong> in the top bar.
+    </div>
+
+    <div class="add-type-toggle">
+      <button class="type-toggle-btn active" id="addTypeMat" onclick="setAddType('material')">Material / Item</button>
+      <button class="type-toggle-btn" id="addTypeProc" onclick="setAddType('process')">Process / Service</button>
+    </div>
+
+    <!-- Material form -->
+    <div id="formMaterial">
+      <div class="form-section">
+        <div class="form-section-title">Material Details</div>
+        <div class="form-grid">
+          <div class="form-field full"><label class="f-label">Material Name *</label><input class="f-input" id="newMatName" placeholder="e.g. Oak Wood, Copper Sheet 2mm"></div>
+          <div class="form-field"><label class="f-label">Category</label>
+            <select class="f-select" id="newMatCat">
+              <option>Wood</option><option>Metal</option><option>Glass</option><option>Acrylic</option>
+              <option>Fabric & Print</option><option>Stone</option><option>Cane & Rope</option>
+              <option>Hardware & Misc</option><option>Finish</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-field"><label class="f-label">Price / cu ft</label><input class="f-input" id="newPriceCft" placeholder="e.g. 3000/-"></div>
+          <div class="form-field"><label class="f-label">Price / sq ft</label><input class="f-input" id="newPriceSqft" placeholder="e.g. 150/-"></div>
+          <div class="form-field"><label class="f-label">Price / kg</label><input class="f-input" id="newPriceKg" placeholder="e.g. 250/-"></div>
+          <div class="form-field"><label class="f-label">Price / ft</label><input class="f-input" id="newPriceFt" placeholder="e.g. 80/-"></div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Image (optional)</div>
+        <div class="img-btn-row">
+          <button type="button" class="img-btn-upload" onclick="document.getElementById('matImgFile').click()">📷 Upload from device</button>
+          <button type="button" class="img-btn-url" onclick="toggleImgUrl('mat')">🔗 Paste URL</button>
+          <input type="file" accept="image/*" id="matImgFile" style="display:none" onchange="handleImgUpload('mat',this)">
+        </div>
+        <div id="matImgUrlRow" style="display:none;margin-top:8px">
+          <input class="f-input" id="matImgUrl" placeholder="https://… paste image link here" oninput="handleUrlPreview('mat',this.value)">
+        </div>
+        <div id="matImgPreview" style="margin-top:10px;display:none">
+          <div class="img-preview-wrap">
+            <img id="matImgPreviewImg" class="img-preview" src="" alt="Preview">
+            <button class="img-clear" onclick="clearImg('mat')" title="Remove image">✕ Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Vendors</div>
+        <div id="matVendorBlocks">
+          <div class="vendor-block" data-index="0">
+            <div class="vendor-block-title">Vendor 1</div>
+            <div class="form-grid">
+              <div class="form-field"><label class="f-label">Contact Name</label><input class="f-input mv-name" placeholder="Person name"></div>
+              <div class="form-field"><label class="f-label">Company</label><input class="f-input mv-company" placeholder="Company name"></div>
+              <div class="form-field"><label class="f-label">City</label><input class="f-input mv-city" placeholder="City"></div>
+              <div class="form-field"><label class="f-label">Phone</label><input class="f-input mv-contact" placeholder="Mobile number" type="tel"></div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-add-vendor" onclick="addVendorBlock('mat')">+ Add Another Vendor</button>
+      </div>
+    </div>
+
+    <!-- Process form -->
+    <div id="formProcess" style="display:none">
+      <div class="form-section">
+        <div class="form-section-title">Process Details</div>
+        <div class="form-grid">
+          <div class="form-field full"><label class="f-label">Process Name *</label><input class="f-input" id="newProcName" placeholder="e.g. CNC Routing, Chrome Plating"></div>
+          <div class="form-field"><label class="f-label">Type</label>
+            <select class="f-select" id="newProcType">
+              <option value="surface">Surface Treatment</option><option value="cutting">Cutting</option>
+              <option value="cnc">CNC / Carving</option><option value="lathe">Lathe</option>
+              <option value="welding">Welding</option><option value="finish">Finishing</option>
+              <option value="textile">Textile</option><option value="service">Service</option>
+            </select>
+          </div>
+          <div class="form-field"><label class="f-label">Price / sq ft</label><input class="f-input" id="newProcSqft" placeholder="e.g. 200/-"></div>
+          <div class="form-field"><label class="f-label">Price / time unit</label><input class="f-input" id="newProcTime" placeholder="e.g. 500/-"></div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Image (optional)</div>
+        <div class="img-btn-row">
+          <button type="button" class="img-btn-upload" onclick="document.getElementById('procImgFile').click()">📷 Upload from device</button>
+          <button type="button" class="img-btn-url" onclick="toggleImgUrl('proc')">🔗 Paste URL</button>
+          <input type="file" accept="image/*" id="procImgFile" style="display:none" onchange="handleImgUpload('proc',this)">
+        </div>
+        <div id="procImgUrlRow" style="display:none;margin-top:8px">
+          <input class="f-input" id="procImgUrl" placeholder="https://… paste image link here" oninput="handleUrlPreview('proc',this.value)">
+        </div>
+        <div id="procImgPreview" style="margin-top:10px;display:none">
+          <div class="img-preview-wrap">
+            <img id="procImgPreviewImg" class="img-preview" src="" alt="Preview">
+            <button class="img-clear" onclick="clearImg('proc')" title="Remove image">✕ Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Service Providers</div>
+        <div id="procProviderBlocks">
+          <div class="vendor-block" data-index="0">
+            <div class="vendor-block-title">Provider 1</div>
+            <div class="form-grid">
+              <div class="form-field"><label class="f-label">Name</label><input class="f-input pp-name" placeholder="Provider name"></div>
+              <div class="form-field"><label class="f-label">Phone</label><input class="f-input pp-contact" placeholder="Mobile number" type="tel"></div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-add-vendor" onclick="addVendorBlock('proc')">+ Add Another Provider</button>
+      </div>
+    </div>
+
+    <button class="btn-save-entry" onclick="saveNewEntry()">Save to Library</button>
+  </div>
+</div>
+
+<!-- IMAGE MODAL -->
+<div class="img-modal-overlay" id="imgModal" onclick="if(event.target===this)closeImgModal()">
+  <div class="img-modal">
+    <div class="img-modal-head">
+      <span class="img-modal-title" id="imgModalTitle">Add Image</span>
+      <button class="img-modal-close" onclick="closeImgModal()">✕</button>
+    </div>
+    <div class="img-modal-body">
+      <img id="imgModalPreview" class="img-modal-preview" src="" alt="" style="display:none">
+      <div class="img-modal-btns">
+        <button class="img-modal-btn primary" onclick="document.getElementById('imgModalFile').click()">📷 Upload Photo</button>
+        <button class="img-modal-btn secondary" id="btnImgModalUrl" onclick="toggleImgModalUrl()">🔗 Paste URL</button>
+        <input type="file" id="imgModalFile" accept="image/*" style="display:none" onchange="handleModalImgUpload(this)">
+      </div>
+      <input class="img-modal-url" id="imgModalUrlInput" placeholder="https://… paste image URL" oninput="handleModalUrlInput(this.value)">
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="img-modal-btn primary" style="flex:2" onclick="saveModalImg()">Save Image</button>
+        <button class="img-modal-btn danger" id="btnImgModalRemove" onclick="removeModalImg()" style="display:none">Remove</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="bnav active" id="bnav-search" onclick="showPage('search')"><span class="ico">⌕</span>Search</button>
+  <button class="bnav" id="bnav-fav" onclick="showPage('fav')"><span class="ico">♥</span>Saved<span class="bnav-badge" id="favBadge" style="display:none">0</span></button>
+  <button class="bnav" id="bnav-add" onclick="showPage('add')"><span class="ico">+</span>Add</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════
+   DATA
+══════════════════════════════════════ */
+const BASE_MATERIALS=[
+  {name:"Ash",cat:"Wood",prices:{cft:"3000/-"},vendors:[{name:"Shravan bansal",company:"Bansal Forest Products",city:"Gandhidham",contact:"9727795221"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"},{name:"Bhavesh",company:"Chamunda Timber",city:"Ahmedabad",contact:"9687989669"}]},
+  {name:"Pine",cat:"Wood",prices:{},vendors:[{name:"Shravan bansal",company:"Bansal Forest Products",city:"Gandhidham",contact:"9727795221"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"},{name:"Bhavesh",company:"Chamunda Timber",city:"Ahmedabad",contact:"9687989669"}]},
+  {name:"Teak",cat:"Wood",prices:{cft:"3000/-"},vendors:[{name:"Shravan bansal",company:"Bansal Forest Products",city:"Gandhidham",contact:"9727795221"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"},{name:"Bhavesh",company:"Chamunda Timber",city:"Ahmedabad",contact:"9687989669"}]},
+  {name:"Burma Teak",cat:"Wood",prices:{},vendors:[{name:"Shravan bansal",company:"Bansal Forest Products",city:"Gandhidham",contact:"9727795221"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"},{name:"Bhavesh",company:"Chamunda Timber",city:"Ahmedabad",contact:"9687989669"}]},
+  {name:"Walnut",cat:"Wood",prices:{},vendors:[{name:"Shravan bansal",company:"Bansal Forest Products",city:"Gandhidham",contact:"9727795221"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"},{name:"Bhavesh",company:"Chamunda Timber",city:"Ahmedabad",contact:"9687989669"}]},
+  {name:"Reclaim Wood",cat:"Wood",prices:{},vendors:[{name:"Shravan bansal",company:"Bansal Forest Products",city:"Gandhidham",contact:"9727795221"},{name:"Sunil Pitwa",company:"Mandir carving",city:"Ahmedabad",contact:"9879051109"},{name:"Jayesh Patel",company:"Krishna Wood Mart",city:"Ahmedabad",contact:"9909032061"}]},
+  {name:"Valsari",cat:"Wood",prices:{},vendors:[{name:"Sunil Pitwa",company:"Mandir carving",city:"Ahmedabad",contact:"9879051109"}]},
+  {name:"SS Sheet 1.5 mm",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Sheet 2 mm",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Sheet 3 mm",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Sheet 4 mm",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Sheet 5 mm",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Sheet 6 mm",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Pipe",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"SS Rod",cat:"Metal",prices:{},vendors:[{name:"Hasmukh metal",company:"Hasmukh metal",city:"Ahmedabad",contact:"9825310560"},{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"MS Sheet 1.5 mm",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"MS Sheet 2 mm",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"MS Sheet 3 mm",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"MS Sheet 4 mm",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"MS Sheet 5 mm",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"MS Sheet 6 mm",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"MS Pipe",cat:"Metal",prices:{},vendors:[{name:"Hari om",company:"Hari om metal",city:"Ahmedabad",contact:"9106020332"}]},
+  {name:"BRASS Sheet 1.5 mm",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Sheet 2 mm",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Sheet 3 mm",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Sheet 4 mm",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Sheet 5 mm",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Sheet 6 mm",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Pipe",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"BRASS Rod",cat:"Metal",prices:{},vendors:[{name:"Laxmi metals",company:"Laxmi metal",city:"Ahmedabad",contact:"8238315713"}]},
+  {name:"Glass 6 mm",cat:"Glass",prices:{},vendors:[{name:"Ajmal / Salauddin",company:"Iscon glass design",city:"Ahmedabad",contact:"9106822131"},{name:"Vasim",company:"Glass house",city:"Ahmedabad",contact:"7820054945"},{name:"Ajeet",company:"Glass house",city:"Ahmedabad",contact:"8980916600"}]},
+  {name:"Glass 8 mm",cat:"Glass",prices:{},vendors:[{name:"Ajmal / Salauddin",company:"Iscon glass design",city:"Ahmedabad",contact:"9106822131"},{name:"Vasim",company:"Glass house",city:"Ahmedabad",contact:"7820054945"},{name:"Ajeet",company:"Glass house",city:"Ahmedabad",contact:"8980916600"}]},
+  {name:"Glass 10 mm",cat:"Glass",prices:{},vendors:[{name:"Ajmal / Salauddin",company:"Iscon glass design",city:"Ahmedabad",contact:"9106822131"},{name:"Vasim",company:"Glass house",city:"Ahmedabad",contact:"7820054945"},{name:"Ajeet",company:"Glass house",city:"Ahmedabad",contact:"8980916600"}]},
+  {name:"Glass 12 mm",cat:"Glass",prices:{},vendors:[{name:"Ajmal / Salauddin",company:"Iscon glass design",city:"Ahmedabad",contact:"9106822131"},{name:"Vasim",company:"Glass house",city:"Ahmedabad",contact:"7820054945"},{name:"Ajeet",company:"Glass house",city:"Ahmedabad",contact:"8980916600"}]},
+  {name:"Mirror",cat:"Glass",prices:{},vendors:[{name:"Ajmal / Salauddin",company:"Iscon glass design",city:"Ahmedabad",contact:"9106822131"},{name:"Vasim",company:"Glass house",city:"Ahmedabad",contact:"7820054945"},{name:"Ajeet",company:"Glass house",city:"Ahmedabad",contact:"8980916600"}]},
+  {name:"Acrylic Sheet 2 mm",cat:"Acrylic",prices:{},vendors:[{name:"Balaji Acrylic",company:"Balaji Acrylic",city:"Ahmedabad",contact:"9879218882"},{name:"Parin Doshi",company:"Parul Cooperation",city:"Ahmedabad",contact:"9825061951"},{name:"Sun acrylam",company:"Sun acrylam",city:"Ahmedabad",contact:"9824011722"}]},
+  {name:"Acrylic Sheet 4 mm",cat:"Acrylic",prices:{},vendors:[{name:"Balaji Acrylic",company:"Balaji Acrylic",city:"Ahmedabad",contact:"9879218882"},{name:"Parin Doshi",company:"Parul Cooperation",city:"Ahmedabad",contact:"9825061951"},{name:"Sun acrylam",company:"Sun acrylam",city:"Ahmedabad",contact:"9824011722"}]},
+  {name:"Acrylic Sheet 6 mm",cat:"Acrylic",prices:{},vendors:[{name:"Balaji Acrylic",company:"Balaji Acrylic",city:"Ahmedabad",contact:"9879218882"},{name:"Parin Doshi",company:"Parul Cooperation",city:"Ahmedabad",contact:"9825061951"},{name:"Sun acrylam",company:"Sun acrylam",city:"Ahmedabad",contact:"9824011722"}]},
+  {name:"Acrylic Sheet 8 mm",cat:"Acrylic",prices:{},vendors:[{name:"Balaji Acrylic",company:"Balaji Acrylic",city:"Ahmedabad",contact:"9879218882"},{name:"Parin Doshi",company:"Parul Cooperation",city:"Ahmedabad",contact:"9825061951"},{name:"Sun acrylam",company:"Sun acrylam",city:"Ahmedabad",contact:"9824011722"}]},
+  {name:"Ply 6 mm",cat:"Wood",prices:{},vendors:[{name:"Xyz",company:"Infra ply wood",city:"Ahmedabad",contact:"8460412911"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"Ply 8 mm",cat:"Wood",prices:{},vendors:[{name:"Xyz",company:"Infra ply wood",city:"Ahmedabad",contact:"8460412911"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"Ply 12 mm",cat:"Wood",prices:{},vendors:[{name:"Xyz",company:"Infra ply wood",city:"Ahmedabad",contact:"8460412911"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"Ply 19 mm",cat:"Wood",prices:{},vendors:[{name:"Xyz",company:"Infra ply wood",city:"Ahmedabad",contact:"8460412911"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"Veneer Ash",cat:"Wood",prices:{},vendors:[{name:"Thomas",company:"Gracious veneers",city:"Ahmedabad",contact:"9824555147"}]},
+  {name:"Veneer Patti Ash",cat:"Wood",prices:{},vendors:[{name:"Thomas",company:"Gracious veneers",city:"Ahmedabad",contact:"9824555147"}]},
+  {name:"Veneer Teak",cat:"Wood",prices:{},vendors:[{name:"Thomas",company:"Gracious veneers",city:"Ahmedabad",contact:"9824555147"}]},
+  {name:"Veneer Patti Teak",cat:"Wood",prices:{},vendors:[{name:"Thomas",company:"Gracious veneers",city:"Ahmedabad",contact:"9824555147"}]},
+  {name:"Veneer Walnut",cat:"Wood",prices:{},vendors:[{name:"Thomas",company:"Gracious veneers",city:"Ahmedabad",contact:"9824555147"}]},
+  {name:"Veneer Patti Walnut",cat:"Wood",prices:{},vendors:[{name:"Thomas",company:"Gracious veneers",city:"Ahmedabad",contact:"9824555147"}]},
+  {name:"MDF 3 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"MDF 4 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"MDF 6 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"MDF 8 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"MDF 12 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"MDF 25 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"Block board 25 mm",cat:"Wood",prices:{},vendors:[{name:"Dhawal",company:"Infra market",city:"Ahmedabad",contact:"9726242833"},{name:"VISHAL",company:"SWAMY WOOD",city:"Ahmedabad",contact:"9825063427"}]},
+  {name:"Fabric",cat:"Fabric & Print",prices:{},vendors:[{name:"Vibha",company:"Dynamic",city:"Ahmedabad",contact:"7817957817"}]},
+  {name:"Vinyl transfer print",cat:"Fabric & Print",prices:{},vendors:[{name:"Nimesh",company:"Navrang number plate",city:"Ahmedabad",contact:"9898557036"}]},
+  {name:"Canvas print",cat:"Fabric & Print",prices:{sqft:"150"},vendors:[{name:"Siddhi print tech",company:"Siddhi print tech",city:"Ahmedabad",contact:"9624024239"}]},
+  {name:"Sticker print with lamination",cat:"Fabric & Print",prices:{sqft:"80"},vendors:[{name:"Siddhi print tech",company:"Siddhi print tech",city:"Ahmedabad",contact:"9624024239"}]},
+  {name:"Sticker print without lamination",cat:"Fabric & Print",prices:{sqft:"60"},vendors:[{name:"Siddhi print tech",company:"Siddhi print tech",city:"Ahmedabad",contact:"9624024239"}]},
+  {name:"Frosted film",cat:"Fabric & Print",prices:{},vendors:[{name:"Sachln bhai",company:"Frosted film",city:"Ahmedabad",contact:"9898940990"}]},
+  {name:"Polish material",cat:"Finish",prices:{},vendors:[{name:"Ram chandra paints",company:"Ram chandra paints",city:"Ahmedabad",contact:"6352722239"},{name:"Bhanu pratap singh",company:"Sinco (oil polish)",city:"Jodhpur",contact:"9414194990"}]},
+  {name:"Stone",cat:"Stone",prices:{},vendors:[{name:"Ishaan",company:"Natural granite",city:"Ahmedabad",contact:"9537863555"}]},
+  {name:"Packing material",cat:"Hardware & Misc",prices:{},vendors:[{name:"Shanghvi",company:"Shanghvi packaging material",city:"Ahmedabad",contact:"9327764721"}]},
+  {name:"Hardware",cat:"Hardware & Misc",prices:{},vendors:[{name:"Swaraj",company:"Swaraj",city:"Ahmedabad",contact:"9825866625"},{name:"Yogi",company:"Yogi hardware gota",city:"Ahmedabad",contact:"9377970101"},{name:"Arihant",company:"Arihant",city:"Ahmedabad",contact:"9429600522"},{name:"Murtuza",company:"Saifee enterprise",city:"Ahmedabad",contact:"9879519272"}]},
+  {name:"Gasket rubber",cat:"Hardware & Misc",prices:{},vendors:[{name:"Anmol bhai",company:"Bhawana group",city:"Ahmedabad",contact:"9825030113"}]},
+  {name:"Game table accessories",cat:"Hardware & Misc",prices:{},vendors:[{name:"World of sports",company:"World of sports",city:"Ahmedabad",contact:"8866262806"}]},
+  {name:"Cane roll",cat:"Cane & Rope",prices:{},vendors:[{name:"Shaunak",company:"Rjt impex",city:"Ahmedabad",contact:"9601410261"},{name:"Global engineering",company:"Global engineering",city:"Ahmedabad",contact:"9227193485"}]},
+  {name:"Rope",cat:"Cane & Rope",prices:{},vendors:[{name:"AR traders",company:"AR traders",city:"Ahmedabad",contact:"9016548880"},{name:"Rope dealer",company:"Rope dealer",city:"Ahmedabad",contact:"8490055530"}]},
+  {name:"Danish paper chord",cat:"Cane & Rope",prices:{},vendors:[{name:"Contact",company:"-",city:"Bangalore",contact:"9886118800"}]},
+];
+const BASE_PROCESSES=[
+  {name:"PVD",type:"surface",prices:{},providers:[{name:"Raju bhai AR PVD",contact:"7016702993"}]},
+  {name:"Power Coating",type:"surface",prices:{},providers:[{name:"Chandradeep powder coating",contact:"9426519420"},{name:"Jayesh bhai",contact:"8200607380"},{name:"Paresh bhai powder coating",contact:"9825615029"}]},
+  {name:"Laser cutting (wood)",type:"cutting",prices:{},providers:[{name:"Parth Laser Art studio",contact:"7778912911"}]},
+  {name:"Laser cutting (acrylic)",type:"cutting",prices:{time:"10/-"},providers:[{name:"Parth Laser Art studio",contact:"7778912911"}]},
+  {name:"Laser cutting (metal)",type:"cutting",prices:{},providers:[{name:"Kamlesh bhai Tatsat laser cutting",contact:"9998699535"},{name:"Pintu bhai",contact:"9427037716"}]},
+  {name:"CNC (wood)",type:"cnc",prices:{},providers:[{name:"Pintu bhai",contact:"9427037716"},{name:"Shailesh bhai",contact:"9727889411"},{name:"Kaushik",contact:"9723111657"}]},
+  {name:"CNC (metal) milling",type:"cnc",prices:{},providers:[{name:"Hardik jalaram milling",contact:""}]},
+  {name:"Lathe (wood)",type:"lathe",prices:{},providers:[{name:"Ghanshyam bhai",contact:"8905580694"}]},
+  {name:"Lathe (metal)",type:"lathe",prices:{},providers:[{name:"Kanu bhai",contact:"9998000128"}]},
+  {name:"Welding Aluminium",type:"welding",prices:{},providers:[{name:"Manish vihaan steel",contact:"9974644661"}]},
+  {name:"Welding SS",type:"welding",prices:{},providers:[{name:"Manish vihaan steel",contact:"9974644661"}]},
+  {name:"Welding MS",type:"welding",prices:{},providers:[{name:"Manish vihaan steel",contact:"9974644661"}]},
+  {name:"Welding Brass",type:"welding",prices:{},providers:[{name:"Manish vihaan steel",contact:"9974644661"}]},
+  {name:"Buffing",type:"finish",prices:{},providers:[{name:"Himmat bhai",contact:"9377986509"},{name:"Ishwarlal metal buffing",contact:"9725790584"}]},
+  {name:"Polishing",type:"finish",prices:{},providers:[{name:"Shyamraj",contact:"9662480439"},{name:"Mohan kaka",contact:"8128682741"},{name:"Brijesh",contact:"9327568411"}]},
+  {name:"Rug making — viscose silk 4000gsm",type:"textile",prices:{sqft:"375/-"},providers:[{name:"Saurav (VSK Rugs Mumbai)",contact:"9335407306"}]},
+  {name:"Rug making — NZ wool 4000gsm",type:"textile",prices:{sqft:"350/-"},providers:[{name:"Saurav (VSK Rugs Mumbai)",contact:"9335507306"}]},
+  {name:"Rug making — blended 2500gsm",type:"textile",prices:{sqft:"230/-"},providers:[{name:"Saurav (VSK Rugs Mumbai)",contact:"9335607306"}]},
+  {name:"Rug making — NZ wool 3500gsm",type:"textile",prices:{sqft:"295/-"},providers:[{name:"Saurav (VSK Rugs Mumbai)",contact:"9335707306"}]},
+  {name:"Upholstery",type:"textile",prices:{},providers:[{name:"Vinod bhai",contact:"6353390902"},{name:"Nattu kaka",contact:"9825036071"}]},
+  {name:"Stone Carving",type:"cnc",prices:{},providers:[{name:"Kishan bhai",contact:"9376949988"}]},
+  {name:"Stone CNC",type:"cnc",prices:{},providers:[{name:"Shiva",contact:"9825555138"},{name:"Jignesh",contact:"9426857470"}]},
+  {name:"Wood carving",type:"cnc",prices:{},providers:[{name:"Abhijeet",contact:"9974300708"}]},
+  {name:"Wood work (chair)",type:"service",prices:{},providers:[{name:"Ashok mewara",contact:"9426556315"}]},
+  {name:"Wood work",type:"service",prices:{},providers:[{name:"Kushal / Jasraj",contact:"8488838182"}]},
+  {name:"Cane/rope work (weaving)",type:"service",prices:{},providers:[{name:"Arvind bhai",contact:"9327035922"},{name:"Raju bhai / Rishi",contact:"9824261830"}]},
+  {name:"General labour (civil)",type:"service",prices:{},providers:[{name:"Amar singh",contact:"9558178726"}]},
+  {name:"Laptop / Printer repair",type:"service",prices:{},providers:[{name:"Star laptop repair",contact:"9909104777"},{name:"Deepak Rythym house",contact:"7728991589"}]},
+  {name:"Electrical",type:"service",prices:{},providers:[{name:"Dilip via Chetan",contact:"6354071643"}]},
+  {name:"Transport",type:"service",prices:{},providers:[{name:"Chetan patel (True Value Logistics)",contact:"9879509332"}]},
+  {name:"Loading / Unloading labour",type:"service",prices:{},providers:[{name:"Rakesh bhai",contact:"9081785442"}]},
+];
+
+/* ══════════════════════════════════════
+   STATE
+══════════════════════════════════════ */
+let materials=[], processes=[], favorites=[], activeTab='materials', addType='material';
+let matVendorCount=1, procProviderCount=1;
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+function loadBuiltin(){
+  materials=BASE_MATERIALS.map((m,i)=>({...m,id:'m'+i}));
+  processes=BASE_PROCESSES.map((p,i)=>({...p,id:'p'+i}));
+  loadFavs();
+  loadSavedImages();
+  populateCatFilter();
+  document.getElementById('configPanel').classList.remove('open');
+  setStatus('ok',`${materials.length} materials · ${processes.length} processes loaded`);
+  liveSearch();
+  showToast('Library loaded');
+}
+
+function loadFavs(){
+  try{ favorites=JSON.parse(localStorage.getItem('dc_favs')||'[]'); }catch(e){ favorites=[]; }
+  updateFavBadge();
+}
+function saveFavs(){ try{localStorage.setItem('dc_favs',JSON.stringify(favorites));}catch(e){} }
+
+/* ══════════════════════════════════════
+   GOOGLE SHEETS
+══════════════════════════════════════ */
+async function connectSheet(){
+  const id=document.getElementById('sheetId').value.trim() || '1CtUFueM32VCuyxxHLRW0OqXU2sCbQmvyggsVHH--ogc';
+  const key=document.getElementById('apiKey').value.trim() || 'AIzaSyBlo--g02Spa-vEXcDohrCYnj3I0FqppGU';
+  setStatus('ok','Connecting to Google Sheets…');
+  try{
+    const res=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${id}/values/Sheet1?key=${key}`);
+    if(!res.ok) throw new Error('API '+res.status);
+    _sheetId=id; _apiKey=key;
+    try{localStorage.setItem('dc_sheet_id',id);localStorage.setItem('dc_api_key',key);}catch(e){}
+    parseSheetRows((await res.json()).values||[]);
+    document.getElementById('configPanel').classList.remove('open');
+    document.getElementById('btnRefresh').style.display='';
+    setStatus('ok',`Connected — ${materials.length} materials · ${processes.length} processes`);
+    liveSearch();
+  }catch(e){setStatus('error','Failed: '+e.message);}
+}
+
+async function refreshSheet(){
+  if(!_sheetId||!_apiKey){showToast('No sheet connected — enter Sheet ID + API Key');return;}
+  setStatus('ok','Syncing from Google Sheets…');
+  try{
+    const res=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${_sheetId}/values/Sheet1?key=${_apiKey}`);
+    if(!res.ok) throw new Error('API '+res.status);
+    parseSheetRows((await res.json()).values||[]);
+    loadSavedImages();
+    liveSearch();
+    setStatus('ok',`Synced — ${materials.length} materials · ${processes.length} processes`);
+    showToast('↻ Sheet synced');
+  }catch(e){setStatus('error','Sync failed: '+e.message);}
+}
+function parseSheetRows(rows){
+  materials=[];processes=[];
+  for(let i=2;i<rows.length;i++){
+    const r=rows[i];while(r.length<35)r.push('');
+    const mn=r[0]?.trim();
+    if(mn){
+      const vs=[];
+      [[5,6,7,8],[9,10,11,12],[13,14,15,16]].forEach(([n,ci,co,ct])=>{if(r[n]?.trim())vs.push({name:r[n].trim(),city:r[ci]?.trim()||'',company:r[co]?.trim()||'',contact:r[ct]?.trim()||''});});
+      const pr={};
+      if(r[1]?.trim()&&r[1].trim()!=='-')pr.cft=r[1].trim();
+      if(r[2]?.trim()&&r[2].trim()!=='-')pr.sqft=r[2].trim();
+      if(r[3]?.trim()&&r[3].trim()!=='-')pr.kg=r[3].trim();
+      if(r[4]?.trim()&&r[4].trim()!=='-')pr.ft=r[4].trim();
+      const nl=mn.toLowerCase();
+      const cat=nl.includes('ss ')||nl.includes('ms ')||nl.includes('brass')||nl.includes('pipe')||nl.includes('rod')?'Metal':nl.includes('ash')||nl.includes('pine')||nl.includes('teak')||nl.includes('walnut')||nl.includes('ply')||nl.includes('mdf')||nl.includes('veneer')||nl.includes('wood')||nl.includes('block board')?'Wood':nl.includes('glass')||nl.includes('mirror')?'Glass':nl.includes('acrylic')?'Acrylic':nl.includes('fabric')||nl.includes('vinyl')||nl.includes('canvas')||nl.includes('sticker')||nl.includes('frosted')||nl.includes('print')?'Fabric & Print':nl.includes('stone')||nl.includes('granite')?'Stone':nl.includes('cane')||nl.includes('rope')||nl.includes('danish')?'Cane & Rope':nl.includes('hardware')||nl.includes('gasket')||nl.includes('packing')?'Hardware & Misc':nl.includes('polish')||nl.includes('paint')?'Finish':'Other';
+      materials.push({id:'m'+i,name:mn,cat,prices:pr,vendors:vs});
+    }
+    const pn=r[19]?.trim();
+    if(pn){
+      const ps=[];
+      [[22,23],[24,25],[26,27],[28,29]].forEach(([n,c])=>{if(r[n]?.trim())ps.push({name:r[n].trim(),contact:r[c]?.trim()||''});});
+      const pr={};
+      if(r[20]?.trim()&&r[20].trim()!=='-')pr.sqft=r[20].trim();
+      if(r[21]?.trim()&&r[21].trim()!=='-')pr.time=r[21].trim();
+      processes.push({id:'p'+i,name:pn,type:'service',prices:pr,providers:ps});
+    }
+  }
+  loadFavs();populateCatFilter();loadSavedImages();
+}
+
+/* ══════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════ */
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.bnav').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('bnav-'+name).classList.add('active');
+  if(name==='fav') renderFavs();
+  window.scrollTo(0,0);
+}
+function toggleConfig(){ document.getElementById('configPanel').classList.toggle('open'); }
+
+/* ══════════════════════════════════════
+   TABS
+══════════════════════════════════════ */
+function switchTab(tab){
+  activeTab=tab;
+  document.getElementById('tab-materials').classList.toggle('active',tab==='materials');
+  document.getElementById('tab-processes').classList.toggle('active',tab==='processes');
+  document.getElementById('tab-vendors').classList.toggle('active',tab==='vendors');
+  document.getElementById('searchRowMat').style.display=tab==='materials'?'flex':'none';
+  document.getElementById('searchRowProc').style.display=tab==='processes'?'flex':'none';
+  document.getElementById('searchRowVendor').style.display=tab==='vendors'?'flex':'none';
+  liveSearch();
+}
+function populateCatFilter(){
+  const cats=[...new Set(materials.map(m=>m.cat))].sort();
+  document.getElementById('matCat').innerHTML='<option value="">All</option>'+cats.map(c=>`<option>${x(c)}</option>`).join('');
+}
+
+/* ══════════════════════════════════════
+   SEARCH
+══════════════════════════════════════ */
+function liveSearch(){
+  if(!materials.length&&!processes.length) return;
+  if(activeTab==='materials') renderMaterials(filterMaterials());
+  else if(activeTab==='processes') renderProcesses(filterProcesses());
+  else renderVendors();
+}
+function clearSearch(){
+  ['matName','matVendor','procName','procProvider'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('matCat').value='';
+  liveSearch();
+}
+function filterMaterials(){
+  const name=document.getElementById('matName').value.trim().toLowerCase();
+  const cat=document.getElementById('matCat').value.toLowerCase();
+  const vend=document.getElementById('matVendor').value.trim().toLowerCase();
+  return materials.filter(m=>(!name||m.name.toLowerCase().includes(name))&&(!cat||m.cat.toLowerCase()===cat)&&(!vend||m.vendors.some(v=>(v.company||v.name).toLowerCase().includes(vend)||v.name.toLowerCase().includes(vend))));
+}
+function filterProcesses(){
+  const name=document.getElementById('procName').value.trim().toLowerCase();
+  const prov=document.getElementById('procProvider').value.trim().toLowerCase();
+  return processes.filter(p=>(!name||p.name.toLowerCase().includes(name))&&(!prov||p.providers.some(pr=>pr.name.toLowerCase().includes(prov))));
+}
+
+/* ══════════════════════════════════════
+   VENDOR VIEW  (search by vendor → see all their products)
+══════════════════════════════════════ */
+function renderVendors(){
+  const area=document.getElementById('resultsArea');
+  const q=document.getElementById('vendorSearch').value.trim().toLowerCase();
+  
+  // Build a map: vendorKey → { name, company, city, contact, items[] }
+  const vendorMap={};
+  const vendorKey=(v)=>(v.company&&v.company!=='-'?v.company:v.name).toLowerCase().trim();
+
+  materials.forEach(m=>{
+    m.vendors.forEach(v=>{
+      const k=vendorKey(v);
+      if(q && !k.includes(q) && !v.name.toLowerCase().includes(q)) return;
+      if(!vendorMap[k]) vendorMap[k]={
+        displayName: tc(v.company&&v.company!=='-'?v.company:v.name),
+        contactName: tc(v.name),
+        city: v.city, contact: cleanContact(v.contact),
+        materials:[], processes:[]
+      };
+      vendorMap[k].materials.push({name:m.name, cat:m.cat, prices:m.prices});
+    });
+  });
+  processes.forEach(p=>{
+    p.providers.forEach(v=>{
+      const k=v.name.toLowerCase().trim();
+      if(q && !k.includes(q)) return;
+      if(!vendorMap[k]) vendorMap[k]={
+        displayName: tc(v.name),
+        contactName: '',
+        city:'', contact: cleanContact(v.contact),
+        materials:[], processes:[]
+      };
+      vendorMap[k].processes.push({name:p.name, type:p.type, prices:p.prices});
+    });
+  });
+
+  const vendors=Object.values(vendorMap);
+  if(!vendors.length){
+    area.innerHTML=`<div class="empty"><div class="empty-label">No Results</div><div class="empty-title">Vendor Not Found</div><div class="empty-sub">Try a different name or company.</div></div>`;
+    return;
+  }
+
+  const cards=vendors.map(v=>{
+    const c=v.contact;
+    const matChips=v.materials.map(m=>`<span class="vv-chip vv-chip-mat" title="${x(m.cat)}">${x(tc(m.name))}</span>`).join('');
+    const procChips=v.processes.map(p=>`<span class="vv-chip vv-chip-proc">${x(tc(p.name))}</span>`).join('');
+    return `<div class="vv-card">
+      <div class="vv-head">
+        <div class="vv-info">
+          <div class="vv-company">${x(v.displayName)}</div>
+          ${v.contactName&&v.contactName!==v.displayName?`<div class="vv-person">Contact: ${x(v.contactName)}</div>`:''}
+          ${v.city?`<div class="vv-city">📍 ${x(tc(v.city))}</div>`:''}
+          ${c?`<div class="vv-contact">📱 ${x(c)}</div>`:''}
+        </div>
+        <div class="vv-actions">
+          ${c?`<a href="tel:${c}" class="btn-call">📞 Call</a><a href="https://wa.me/91${c.replace(/\D/g,'').slice(-10)}" target="_blank" class="btn-wa">WA</a>`:''}
+        </div>
+      </div>
+      ${v.materials.length?`<div class="vv-section"><div class="vv-section-label">Supplies (${v.materials.length})</div><div class="vv-chips">${matChips}</div></div>`:''}
+      ${v.processes.length?`<div class="vv-section" style="border-top:1px solid var(--dim)"><div class="vv-section-label">Services (${v.processes.length})</div><div class="vv-chips">${procChips}</div></div>`:''}
+    </div>`;
+  }).join('');
+
+  area.innerHTML=`<div class="r-bar"><div class="r-count"><strong>${vendors.length}</strong> Vendor${vendors.length!==1?'s':''}</div></div><div class="card-list">${cards}</div>`;
+}
+
+/* ══════════════════════════════════════
+   FAVORITES — per vendor (material+vendor combo)
+══════════════════════════════════════ */
+function isFavVendor(favKey){ return favorites.some(f=>f.favKey===favKey); }
+
+function toggleFavVendor(matId, vendorDisplayName, type){
+  const favKey = matId+'__'+vendorDisplayName.toLowerCase().replace(/\s+/g,'_');
+  const existing = favorites.findIndex(f=>f.favKey===favKey);
+  if(existing>=0){
+    favorites.splice(existing,1);
+    showToast('Removed from favourites');
+  } else {
+    const mat = materials.find(m=>m.id===matId);
+    if(!mat) return;
+    // Find the specific vendor
+    const vendor = mat.vendors.find(v=>{
+      const co=v.company&&v.company!=='-'?v.company:v.name;
+      return tc(co)===vendorDisplayName;
+    }) || mat.vendors[0];
+    // Save as a single-vendor favourite
+    const favItem = {
+      ...mat,
+      favKey,
+      favType: type,
+      vendorName: vendorDisplayName,
+      vendors: [vendor],  // only the chosen vendor
+      note: '',
+      savedAt: Date.now()
+    };
+    favorites.push(favItem);
+    showToast(`♥ Saved ${tc(mat.name)} from ${vendorDisplayName}`);
+  }
+  saveFavs();
+  updateFavBadge();
+  const btn=document.querySelector(`.btn-fav[data-id="${matId+'__'+vendorDisplayName.toLowerCase().replace(/\s+/g,'_')}"]`);
+  if(btn){ btn.classList.toggle('saved', isFavVendor(favKey)); btn.textContent=isFavVendor(favKey)?'♥':'♡'; }
+}
+
+/* ══════════════════════════════════════
+   FAVORITES
+══════════════════════════════════════ */
+function isFav(id){ return favorites.some(f=>f.id===id); }
+function toggleFav(id, type){
+  const existing=favorites.findIndex(f=>f.id===id);
+  if(existing>=0){
+    favorites.splice(existing,1);
+    showToast('Removed from favourites');
+  } else {
+    const item = type==='material'
+      ? materials.find(m=>m.id===id)
+      : processes.find(p=>p.id===id);
+    if(!item) return;
+    favorites.push({...item, favType:type, note:'', savedAt: Date.now()});
+    showToast('♥ Saved to favourites');
+  }
+  saveFavs();
+  updateFavBadge();
+  // refresh fav button in DOM
+  const btn=document.querySelector(`.btn-fav[data-id="${id}"]`);
+  if(btn){ btn.classList.toggle('saved', isFav(id)); btn.textContent=isFav(id)?'♥':'♡'; }
+}
+function updateFavBadge(){
+  const n=favorites.length;
+  const b=document.getElementById('favBadge');
+  b.textContent=n; b.style.display=n>0?'flex':'none';
+}
+function clearAllFavs(){
+  if(!favorites.length) return;
+  if(confirm('Clear all saved favourites?')){ favorites=[]; saveFavs(); updateFavBadge(); renderFavs(); showToast('Favourites cleared'); }
+}
+function updateNote(id, val){
+  const f=favorites.find(f=>f.id===id);
+  if(f){ f.note=val; saveFavs(); }
+}
+
+function renderFavs(){
+  const el=document.getElementById('favContent');
+  if(!favorites.length){
+    el.innerHTML=`<div class="empty"><div class="empty-label">Nothing saved yet</div><div class="empty-title">No Favourites</div><div class="empty-sub">Tap the ♡ heart on any material or process to save it here.</div></div>`;
+    return;
+  }
+  const mats=favorites.filter(f=>f.favType==='material');
+  const procs=favorites.filter(f=>f.favType==='process');
+
+  const renderFavItem=(f)=>{
+    const typeLabel=f.favType==='material'?'Material':'Process';
+    const typeClass=f.favType==='material'?'fav-type-mat':'fav-type-proc';
+    const sub=f.favType==='material'
+      ? f.vendors.map(v=>`${v.company||v.name}${v.city?' · '+v.city:''}`).join(' / ')
+      : f.providers.filter(p=>p.name).map(p=>p.name).join(' / ');
+    const contacts=f.favType==='material'
+      ? f.vendors.filter(v=>v.contact).map(v=>`${v.company||v.name}: ${cleanContact(v.contact)}`).join(' · ')
+      : f.providers.filter(p=>p.contact).map(p=>`${p.name}: ${cleanContact(p.contact)}`).join(' · ');
+    const priceStr=buildPriceText(f.prices||{});
+    return `<div class="fav-item">
+      <div class="fav-item-info">
+        <span class="fav-type-tag ${typeClass}">${typeLabel}</span>
+        <div class="fav-item-name">${x(f.name)}</div>
+        <div class="fav-item-sub">${x(sub)}</div>
+        ${contacts?`<div class="fav-item-contact">📱 ${x(contacts)}</div>`:''}
+        ${priceStr?`<div class="fav-item-sub" style="margin-top:2px">💰 ${priceStr}</div>`:''}
+        <input class="fav-note-input" placeholder="Add note for this requirement…" value="${x(f.note||'')}" oninput="updateNote('${f.id}',this.value)">
+      </div>
+      <button class="btn-unfav" onclick="${f.favKey?`toggleFavVendor('${f.id}','${f.vendorName||''}','${f.favType}')`:`toggleFav('${f.id}','${f.favType}')`}" title="Remove">✕</button>
+    </div>`;
+  };
+
+  let html='<div class="card-list" style="margin-bottom:1px">';
+  if(mats.length){
+    html+=`<div style="background:var(--forest);color:var(--white);padding:8px 14px;font-family:var(--fh);font-size:.6rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase">Materials (${mats.length})</div>`;
+    html+=mats.map(renderFavItem).join('');
+  }
+  if(procs.length){
+    html+=`<div style="background:var(--rust);color:var(--white);padding:8px 14px;font-family:var(--fh);font-size:.6rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase">Processes (${procs.length})</div>`;
+    html+=procs.map(renderFavItem).join('');
+  }
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+/* ══════════════════════════════════════
+   PDF EXPORT
+══════════════════════════════════════ */
+function exportFavPDF(){
+  if(!favorites.length){showToast('No favourites to export');return;}
+  const mats=favorites.filter(f=>f.favType==='material');
+  const procs=favorites.filter(f=>f.favType==='process');
+  const dateStr=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+
+  const matRows=mats.map(f=>{
+    const vendors=f.vendors.map((v,i)=>{
+      const co=v.company&&v.company!=='-'?v.company:v.name;
+      const c=cleanContact(v.contact);
+      return `<tr style="background:${i%2?'#faf9f7':'#fff'}">
+        <td style="padding:5px 8px;border:1px solid #e0ddd8">${co}</td>
+        <td style="padding:5px 8px;border:1px solid #e0ddd8">${v.name||'-'}</td>
+        <td style="padding:5px 8px;border:1px solid #e0ddd8">${v.city||'-'}</td>
+        <td style="padding:5px 8px;border:1px solid #e0ddd8">${c||'-'}</td>
+      </tr>`;
+    }).join('');
+    const prices=buildPriceText(f.prices||{});
+    const imgHtml=f.image?`<img src="${f.image}" style="width:80px;height:60px;object-fit:cover;float:right;margin-left:10px;border:1px solid #ddd" onerror="this.style.display='none'">`:'';
+    return `<div style="margin-bottom:16px;break-inside:avoid">
+      <div style="background:#080806;color:#f8f6f2;padding:8px 10px;font-family:Arial,sans-serif;overflow:hidden">
+        ${imgHtml}<strong style="font-size:.95rem">${f.name}</strong>
+        <span style="float:right;background:#2b3d2b;color:#fff;font-size:.7rem;padding:2px 7px;font-weight:600">${f.cat}</span>
+      </div>
+      ${prices?`<div style="background:#f5f0e8;padding:5px 10px;font-size:.8rem;color:#c4390a;font-weight:600;border-left:3px solid #c4390a">Price: ${prices}</div>`:''}
+      ${f.note?`<div style="background:#fffbf0;padding:6px 10px;font-size:.8rem;color:#666;border-left:3px solid #d4b896;font-style:italic">Note: ${f.note}</div>`:''}
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem">
+        <thead><tr style="background:#f2efe9"><th style="padding:5px 8px;border:1px solid #e0ddd8;text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em">Company</th><th style="padding:5px 8px;border:1px solid #e0ddd8;text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em">Contact</th><th style="padding:5px 8px;border:1px solid #e0ddd8;text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em">City</th><th style="padding:5px 8px;border:1px solid #e0ddd8;text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em">Phone</th></tr></thead>
+        <tbody>${vendors}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+
+  const procRows=procs.map(f=>{
+    const providers=f.providers.filter(p=>p.name).map((p,i)=>{
+      const c=cleanContact(p.contact);
+      return `<tr style="background:${i%2?'#faf9f7':'#fff'}">
+        <td style="padding:5px 8px;border:1px solid #e0ddd8">${p.name}</td>
+        <td style="padding:5px 8px;border:1px solid #e0ddd8">${c||'-'}</td>
+      </tr>`;
+    }).join('');
+    const prices=buildPriceText(f.prices||{});
+    return `<div style="margin-bottom:16px;break-inside:avoid">
+      <div style="background:#c4390a;color:#fff;padding:8px 10px;font-family:Arial,sans-serif">
+        <strong style="font-size:.95rem">${f.name}</strong>
+        <span style="float:right;background:rgba(0,0,0,.3);font-size:.7rem;padding:2px 7px;font-weight:600">${f.type}</span>
+      </div>
+      ${prices?`<div style="background:#f5f0e8;padding:5px 10px;font-size:.8rem;color:#c4390a;font-weight:600;border-left:3px solid #c4390a">Price: ${prices}</div>`:''}
+      ${f.note?`<div style="background:#fffbf0;padding:6px 10px;font-size:.8rem;color:#666;border-left:3px solid #d4b896;font-style:italic">Note: ${f.note}</div>`:''}
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem">
+        <thead><tr style="background:#f2efe9"><th style="padding:5px 8px;border:1px solid #e0ddd8;text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em">Provider</th><th style="padding:5px 8px;border:1px solid #e0ddd8;text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em">Phone</th></tr></thead>
+        <tbody>${providers}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <style>
+    body{font-family:Helvetica,Arial,sans-serif;padding:28px;color:#080806;max-width:820px;margin:0 auto;font-size:12px}
+    h1{font-family:'Arial Narrow',Arial,sans-serif;font-size:1.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+    .sub{color:#888;font-size:.78rem;margin-bottom:6px;font-weight:300}
+    .divider{height:2px;background:linear-gradient(90deg,#c4390a,#d4b896 40%,transparent);margin-bottom:22px}
+    .section-head{font-family:'Arial Narrow',Arial,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#888;margin:20px 0 10px;padding-bottom:5px;border-bottom:1px solid #e0ddd8}
+    .footer{margin-top:28px;font-size:.7rem;color:#aaa;border-top:1px solid #eee;padding-top:10px}
+  </style></head><body>
+  <h1>Daftar Connect</h1>
+  <div class="sub">Vendor Requirement Sheet · ${dateStr}</div>
+  <div class="divider"></div>
+  ${mats.length?`<div class="section-head">Materials & Suppliers (${mats.length})</div>${matRows}`:''}
+  ${procs.length?`<div class="section-head">Processes & Services (${procs.length})</div>${procRows}`:''}
+  <div class="footer">Generated by Daftar Connect · ${new Date().toLocaleString()}</div>
+  </body></html>`;
+
+  const w=window.open('','_blank');
+  w.document.write(html);w.document.close();
+  setTimeout(()=>w.print(),500);
+  showToast('PDF dialog opened');
+}
+
+/* ══════════════════════════════════════
+   ADD NEW ENTRY
+══════════════════════════════════════ */
+function setAddType(type){
+  addType=type;
+  document.getElementById('addTypeMat').classList.toggle('active',type==='material');
+  document.getElementById('addTypeProc').classList.toggle('active',type==='process');
+  document.getElementById('formMaterial').style.display=type==='material'?'block':'none';
+  document.getElementById('formProcess').style.display=type==='process'?'block':'none';
+}
+
+function addVendorBlock(which){
+  if(which==='mat'){
+    matVendorCount++;
+    const container=document.getElementById('matVendorBlocks');
+    const div=document.createElement('div');
+    div.className='vendor-block';
+    div.dataset.index=matVendorCount;
+    div.innerHTML=`<div class="vendor-block-title">Vendor ${matVendorCount}</div>
+      <button class="btn-remove-vendor" onclick="this.parentElement.remove()">Remove</button>
+      <div class="form-grid">
+        <div class="form-field"><label class="f-label">Contact Name</label><input class="f-input mv-name" placeholder="Person name"></div>
+        <div class="form-field"><label class="f-label">Company</label><input class="f-input mv-company" placeholder="Company name"></div>
+        <div class="form-field"><label class="f-label">City</label><input class="f-input mv-city" placeholder="City"></div>
+        <div class="form-field"><label class="f-label">Phone</label><input class="f-input mv-contact" placeholder="Mobile number" type="tel"></div>
+      </div>`;
+    container.appendChild(div);
+  } else {
+    procProviderCount++;
+    const container=document.getElementById('procProviderBlocks');
+    const div=document.createElement('div');
+    div.className='vendor-block';
+    div.innerHTML=`<div class="vendor-block-title">Provider ${procProviderCount}</div>
+      <button class="btn-remove-vendor" onclick="this.parentElement.remove()">Remove</button>
+      <div class="form-grid">
+        <div class="form-field"><label class="f-label">Name</label><input class="f-input pp-name" placeholder="Provider name"></div>
+        <div class="form-field"><label class="f-label">Phone</label><input class="f-input pp-contact" placeholder="Mobile number" type="tel"></div>
+      </div>`;
+    container.appendChild(div);
+  }
+}
+
+function saveNewEntry(){
+  if(addType==='material'){
+    const name=document.getElementById('newMatName').value.trim();
+    if(!name){showToast('Material name is required');return;}
+    const prices={};
+    const cft=document.getElementById('newPriceCft').value.trim();const sqft=document.getElementById('newPriceSqft').value.trim();
+    const kg=document.getElementById('newPriceKg').value.trim();const ft=document.getElementById('newPriceFt').value.trim();
+    if(cft)prices.cft=cft;if(sqft)prices.sqft=sqft;if(kg)prices.kg=kg;if(ft)prices.ft=ft;
+    const vendors=[];
+    document.querySelectorAll('#matVendorBlocks .vendor-block').forEach(block=>{
+      const n=block.querySelector('.mv-name')?.value.trim();
+      const co=block.querySelector('.mv-company')?.value.trim();
+      const ci=block.querySelector('.mv-city')?.value.trim();
+      const ct=block.querySelector('.mv-contact')?.value.trim();
+      if(n||co) vendors.push({name:n||'',company:co||'',city:ci||'',contact:ct||''});
+    });
+    const cat=document.getElementById('newMatCat').value;
+    const newMat={id:'m_custom_'+Date.now(),name,cat,prices,vendors,image:_matImg};
+    materials.unshift(newMat);
+    resetAddForm();
+    liveSearch();
+    showPage('search');
+    showSheetCopyDialog(newMat,'material');
+    showToast(`✓ "${name}" added to library`);
+  } else {
+    const name=document.getElementById('newProcName').value.trim();
+    if(!name){showToast('Process name is required');return;}
+    const prices={};
+    const sq=document.getElementById('newProcSqft').value.trim();const ti=document.getElementById('newProcTime').value.trim();
+    if(sq)prices.sqft=sq;if(ti)prices.time=ti;
+    const providers=[];
+    document.querySelectorAll('#procProviderBlocks .vendor-block').forEach(block=>{
+      const n=block.querySelector('.pp-name')?.value.trim();
+      const c=block.querySelector('.pp-contact')?.value.trim();
+      if(n) providers.push({name:n,contact:c||''});
+    });
+    const type=document.getElementById('newProcType').value;
+    const newProc={id:'p_custom_'+Date.now(),name,type,prices,providers,image:_procImg};
+    processes.unshift(newProc);
+    resetAddForm();
+    liveSearch();
+    showPage('search');
+    switchTab('processes');
+    showSheetCopyDialog(newProc,'process');
+    showToast(`✓ "${name}" added to library`);
+  }
+}
+
+function resetAddForm(){
+  document.getElementById('newMatName').value='';
+  ['newPriceCft','newPriceSqft','newPriceKg','newPriceFt','newProcName','newProcSqft','newProcTime'].forEach(id=>document.getElementById(id).value='');
+  // Reset vendor blocks to just one
+  const mb=document.getElementById('matVendorBlocks');
+  mb.querySelectorAll('.mv-name,.mv-company,.mv-city,.mv-contact').forEach(el=>el.value='');
+  mb.querySelectorAll('.vendor-block:not(:first-child)').forEach(el=>el.remove());
+  matVendorCount=1;
+  const pb=document.getElementById('procProviderBlocks');
+  pb.querySelectorAll('.pp-name,.pp-contact').forEach(el=>el.value='');
+  pb.querySelectorAll('.vendor-block:not(:first-child)').forEach(el=>el.remove());
+  procProviderCount=1;
+  clearImg('mat'); clearImg('proc');
+}
+
+/* ══════════════════════════════════════
+   RENDER MATERIALS
+══════════════════════════════════════ */
+function renderMaterials(list){
+  const area=document.getElementById('resultsArea');
+  if(!list.length){area.innerHTML=`<div class="empty"><div class="empty-label">No Results</div><div class="empty-title">Nothing Found</div><div class="empty-sub">Try different search filters.</div></div>`;return;}
+  const cards=list.map(m=>{
+    const vRows=m.vendors.map((v,i)=>{
+      const co=tc(v.company&&v.company!=='-'?v.company:v.name);
+      const vn=tc(v.name);
+      const c=cleanContact(v.contact);
+      const favKey=m.id+'__'+(v.company||v.name).toLowerCase().replace(/\W+/g,'_');
+      const faved=isFavVendor(favKey);
+      return `<div class="vendor-row">
+        <span class="v-num">${i+1}</span>
+        <div class="v-info">
+          <div class="v-company">${x(co)}</div>
+          ${vn&&vn!==co?`<div class="v-name">${x(vn)}</div>`:''}
+          ${v.city?`<div class="v-city">📍 ${x(tc(v.city))}</div>`:''}
+          ${c?`<div class="v-contact">📱 ${x(c)}</div>`:''}
+        </div>
+        <div class="v-actions">
+          ${c?`<a href="tel:${c}" class="btn-call">📞 Call</a><a href="https://wa.me/91${c.replace(/\D/g,'').slice(-10)}" target="_blank" class="btn-wa">WA</a>`:''}
+          <button class="btn-fav ${faved?'saved':''}" data-id="${favKey}"
+            onclick="toggleFavVendor('${m.id}','${(v.company||v.name).replace(/'/g,'&#39;')}','material')"
+            title="${faved?'Remove from favourites':'Save '+co+' for '+tc(m.name)}">${faved?'♥':'♡'}</button>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="mat-card">
+      <div class="card-head" style="display:flex;gap:0;padding:0;align-items:stretch">
+        ${m.image
+          ? `<div class="card-img-has-wrap"><img src="${m.image}" alt="${x(m.name)}" onerror="this.parentElement.innerHTML='<span style=font-size:1.4rem;color:var(--muted)>◻</span>'"><button class="btn-img-card" onclick="openImgModal('${m.id}','material')" title="Change image">📷</button></div>`
+          : `<div class="card-img-ph-wrap"><span style="font-size:1.4rem;color:var(--muted)">◻</span><button class="btn-img-card" onclick="openImgModal('${m.id}','material')" title="Add image">📷</button></div>`
+        }
+        <div class="card-head-inner" style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+            <div><div class="mat-name">${x(tc(m.name))}</div><span class="cat-tag">${x(m.cat)}</span></div>
+            <div class="price-col">${buildPriceHTML(m.prices)}</div>
+          </div>
+        </div>
+      </div>
+      <div class="vendor-list">${vRows}</div>
+    </div>`;
+  }).join('');
+  area.innerHTML=`<div class="r-bar"><div class="r-count"><strong>${list.length}</strong> Material${list.length!==1?'s':''}</div></div><div class="card-list">${cards}</div>`;
+}
+
+/* ══════════════════════════════════════
+   RENDER PROCESSES
+══════════════════════════════════════ */
+function renderProcesses(list){
+  const area=document.getElementById('resultsArea');
+  if(!list.length){area.innerHTML=`<div class="empty"><div class="empty-label">No Results</div><div class="empty-title">Nothing Found</div><div class="empty-sub">Try different search filters.</div></div>`;return;}
+  const typeColors={surface:'#5b3a8a',cutting:'#1a5f7a',cnc:'#2b5d2b',lathe:'#7a3a1a',welding:'#4a3000',finish:'#1a4a5a',textile:'#6b3a5a',service:'#3a3a3a'};
+  const cards=list.map(p=>{
+    const faved=isFav(p.id);
+    const bg=typeColors[p.type]||'#3a3a3a';
+    const pRows=p.providers.filter(pr=>pr.name?.trim()).map((pr,i)=>{
+      const c=cleanContact(pr.contact);
+      return `<div class="provider-row">
+        <div class="v-info">
+          <div class="v-company">${x(tc(pr.name))}</div>
+          ${c?`<div class="v-contact">📱 ${x(c)}</div>`:''}
+        </div>
+        <div class="v-actions">
+          ${c?`<a href="tel:${c}" class="btn-call">📞 Call</a><a href="https://wa.me/91${c.replace(/\D/g,'').slice(-10)}" target="_blank" class="btn-wa">WA</a>`:''}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="proc-card" style="border-left:3px solid ${bg}">
+      <div class="card-head" style="display:flex;gap:0;padding:0;align-items:stretch">
+        ${p.image
+          ? `<div class="card-img-has-wrap"><img src="${p.image}" alt="${x(p.name)}" onerror="this.parentElement.innerHTML='<span style=font-size:1.4rem;color:var(--muted)>◻</span>'"><button class="btn-img-card" onclick="openImgModal('${p.id}','process')" title="Change image">📷</button></div>`
+          : `<div class="card-img-ph-wrap"><span style="font-size:1.4rem;color:var(--muted)">◻</span><button class="btn-img-card" onclick="openImgModal('${p.id}','process')" title="Add image">📷</button></div>`
+        }
+        <div class="card-head-inner" style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+            <div><div class="proc-name">${x(tc(p.name))}</div><span class="proc-tag" style="background:${bg}">${x(p.type)}</span></div>
+            <div style="display:flex;align-items:flex-start;gap:8px;flex-shrink:0">
+              <div class="price-col">${buildPriceHTML(p.prices)}</div>
+              <button class="btn-fav ${faved?'saved':''}" data-id="${p.id}" onclick="toggleFav('${p.id}','process')" title="${faved?'Remove':'Save'}">${faved?'♥':'♡'}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="vendor-list">${pRows}</div>
+    </div>`;
+  }).join('');
+  area.innerHTML=`<div class="r-bar"><div class="r-count"><strong>${list.length}</strong> Process${list.length!==1?'es':''}</div></div><div class="card-list">${cards}</div>`;
+}
+
+/* ══════════════════════════════════════
+   HELPERS
+══════════════════════════════════════ */
+const PRICE_LABELS={cft:'/ cu ft',sqft:'/ sq ft',kg:'/ kg',ft:'/ ft',time:'/ unit'};
+
+// Convert ALL CAPS or mixed-case strings to proper Title Case
+function tc(s){
+  if(!s) return '';
+  s = String(s).trim();
+  // If string is all uppercase (ignoring non-letters), convert to title case
+  const letters = s.replace(/[^a-zA-Z]/g,'');
+  if(letters.length > 1 && letters === letters.toUpperCase()){
+    return s.replace(/\b\w+/g, w => {
+      // Keep short words like "of", "and", "the", "mm", "SS", "MS" as-is if they are abbreviations
+      if(w.length <= 2 && /^[A-Z]+$/.test(w)) return w; // keep SS, MS, mm etc
+      return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    });
+  }
+  return s;
+}
+
+function buildPriceHTML(prices){
+  const entries=Object.entries(prices||{}).filter(([,v])=>v&&v!=='-');
+  if(!entries.length) return `<span class="no-price">Call for price</span>`;
+  return entries.map(([k,v])=>`<div class="price-row"><span class="price-unit">${PRICE_LABELS[k]||k}</span><span class="price-val">₹${v.replace('/-','')}</span></div>`).join('');
+}
+function buildPriceText(prices){
+  const entries=Object.entries(prices||{}).filter(([,v])=>v&&v!=='-');
+  return entries.map(([k,v])=>`₹${v.replace('/-','')} ${PRICE_LABELS[k]||k}`).join(' · ');
+}
+function cleanContact(c){
+  if(!c)return'';
+  const m=c.match(/[\d]{7,}/);
+  return m?m[0]:c.trim();
+}
+function x(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function setStatus(type,msg){const b=document.getElementById('statusBar');b.className='status'+(type==='error'?' error':'');b.textContent=msg;if(type!=='error')setTimeout(()=>b.classList.add('hidden'),5000);}
+let _tt;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2300);}
+
+/* ══════════════════════════════════════
+   OAUTH2 — Sign in with Google
+   Uses implicit flow (token in URL hash)
+   Scope: spreadsheets (read+write)
+══════════════════════════════════════ */
+let _oauthToken = '';
+let _oauthClientId = '';
+let _appsScriptUrl = ''; // kept for backwards compat but no longer used
+
+// Restore saved values
+(function(){
+  try{
+    _oauthToken = sessionStorage.getItem('dc_oauth_token')||'';
+    const sid  = localStorage.getItem('dc_sheet_id')||'1CtUFueM32VCuyxxHLRW0OqXU2sCbQmvyggsVHH--ogc';
+    const akey = localStorage.getItem('dc_api_key')||'AIzaSyBlo--g02Spa-vEXcDohrCYnj3I0FqppGU';
+    _sheetId = sid; _apiKey = akey;
+    if(document.getElementById('sheetId')) document.getElementById('sheetId').value = sid;
+    if(document.getElementById('apiKey')) document.getElementById('apiKey').value = akey;
+    if(_oauthToken) updateOAuthUI(true);
+  }catch(e){}
+  // Handle OAuth redirect (token in URL hash after Google login)
+  if(location.hash.includes('access_token')){
+    const params = new URLSearchParams(location.hash.replace('#','?').slice(1));
+    const token = params.get('access_token');
+    if(token){
+      _oauthToken = token;
+      try{ sessionStorage.setItem('dc_oauth_token', token); }catch(e){}
+      updateOAuthUI(true);
+      history.replaceState(null,'',location.pathname);
+      document.getElementById('configPanel').classList.add('open');
+      showToast('✓ Signed in — writing to Sheet is now enabled');
+    }
+  }
+})();
+
+function saveOAuthClientId(val){
+  _oauthClientId = val.trim();
+  try{ localStorage.setItem('dc_oauth_client_id', _oauthClientId); }catch(e){}
+}
+
+function oauthSignIn(){
+  const clientId = '370109558854-at3qv8nojdnoecdp9q81pp295s2j6far.apps.googleusercontent.com';
+  _oauthClientId = clientId;
+
+  const redirectUri = location.origin + location.pathname;
+  const scope = 'https://www.googleapis.com/auth/spreadsheets';
+  const url = 'https://accounts.google.com/o/oauth2/v2/auth'
+    + '?client_id='    + encodeURIComponent(clientId)
+    + '&redirect_uri=' + encodeURIComponent(redirectUri)
+    + '&response_type=token'
+    + '&scope='        + encodeURIComponent(scope)
+    + '&prompt=consent';
+  window.location.href = url;
+}
+
+function oauthSignOut(){
+  _oauthToken = '';
+  try{ sessionStorage.removeItem('dc_oauth_token'); }catch(e){}
+  updateOAuthUI(false);
+  showToast('Signed out');
+}
+
+function updateOAuthUI(signedIn){
+  document.getElementById('btnSignIn').style.display  = signedIn ? 'none' : '';
+  document.getElementById('btnSignOut').style.display = signedIn ? '' : 'none';
+  document.getElementById('oauthStatus').textContent  = signedIn
+    ? '✓ Signed in — new items will write directly to your Sheet'
+    : 'Not signed in — new items only appear in app';
+  const badge = document.getElementById('btnRefresh');
+  if(badge) badge.style.display = '';
+}
+
+/* ══════════════════════════════════════
+   WRITE NEW ENTRY TO SHEET via Sheets API
+══════════════════════════════════════ */
+async function appendRowToSheet(entry, type){
+  if(!_oauthToken){
+    // silent — user hasn't signed in, that's OK
+    return false;
+  }
+  if(!_sheetId){
+    showToast('No Sheet ID — connect your sheet first');
+    return false;
+  }
+
+  let values = [];
+  if(type==='material'){
+    const v1=entry.vendors[0]||{}, v2=entry.vendors[1]||{}, v3=entry.vendors[2]||{};
+    const p=entry.prices||{};
+    values = [[
+      entry.name, p.cft||'', p.sqft||'', p.kg||'', p.ft||'',
+      v1.name||'', v1.city||'', v1.company||'', v1.contact||'',
+      v2.name||'', v2.city||'', v2.company||'', v2.contact||'',
+      v3.name||'', v3.city||'', v3.company||'', v3.contact||''
+    ]];
+  } else {
+    const p1=entry.providers[0]||{}, p2=entry.providers[1]||{},
+          p3=entry.providers[2]||{}, p4=entry.providers[3]||{};
+    const p=entry.prices||{};
+    values = [[
+      '','','','','','','','','','','','','','','','','','','',
+      entry.name, p.sqft||'', p.time||'',
+      p1.name||'', p1.contact||'',
+      p2.name||'', p2.contact||'',
+      p3.name||'', p3.contact||'',
+      p4.name||'', p4.contact||''
+    ]];
+  }
+
+  try{
+    setStatus('ok','Saving to Google Sheet…');
+    const res = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${_sheetId}/values/Sheet1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + _oauthToken,
+          'Content-Type':  'application/json'
+        },
+        body: JSON.stringify({ values })
+      }
+    );
+    if(res.status === 401){
+      // Token expired — clear it and prompt re-login
+      _oauthToken = '';
+      try{ sessionStorage.removeItem('dc_oauth_token'); }catch(e){}
+      updateOAuthUI(false);
+      showToast('Session expired — tap ⚙ Sheet and sign in again');
+      return false;
+    }
+    if(!res.ok){
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.error?.message || 'HTTP '+res.status);
+    }
+    setStatus('ok', `✓ "${entry.name}" added to Google Sheet`);
+    showToast('✓ Saved directly to Google Sheet');
+    return true;
+  } catch(e){
+    setStatus('error','Sheet write failed: '+e.message);
+    showToast('Write failed: '+e.message);
+    return false;
+  }
+}
+
+function showSheetCopyDialog(entry, type){
+  appendRowToSheet(entry, type);
+}
+
+// Save Sheet ID + API Key to localStorage when entered
+document.addEventListener('DOMContentLoaded', ()=>{
+  const sid = document.getElementById('sheetId');
+  const akey = document.getElementById('apiKey');
+  if(sid) sid.addEventListener('input', ()=>{ _sheetId=sid.value.trim(); try{localStorage.setItem('dc_sheet_id',_sheetId);}catch(e){} });
+  if(akey) akey.addEventListener('input', ()=>{ try{localStorage.setItem('dc_api_key',akey.value.trim());}catch(e){} });
+});
+
+function copyAppsScript(){ showToast('Apps Script not needed anymore — use Sign in with Google above'); }
+
+/* ══════════════════════════════════════
+   IMAGE HANDLING
+══════════════════════════════════════ */
+let _matImg='', _procImg='';
+
+function toggleImgUrl(which){
+  const row=document.getElementById(which==='mat'?'matImgUrlRow':'procImgUrlRow');
+  const btn=document.querySelector('.img-btn-url');
+  const showing=row.style.display!=='none';
+  row.style.display=showing?'none':'block';
+  if(!showing) document.getElementById(which==='mat'?'matImgUrl':'procImgUrl').focus();
+}
+
+function handleImgUpload(which, input){
+  const file=input.files[0];
+  if(!file) return;
+  // Warn if file is large (>2MB base64 can be big)
+  if(file.size > 3*1024*1024){ showToast('Image too large — try under 3MB'); return; }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const data=e.target.result;
+    if(which==='mat'){ _matImg=data; document.getElementById('matImgUrl').value=''; }
+    else { _procImg=data; document.getElementById('procImgUrl').value=''; }
+    showImgPreview(which, data);
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleUrlPreview(which, url){
+  if(!url){ clearImg(which); return; }
+  if(which==='mat') _matImg=url; else _procImg=url;
+  showImgPreview(which, url);
+}
+
+function showImgPreview(which, src){
+  const wrap=document.getElementById(which==='mat'?'matImgPreview':'procImgPreview');
+  const img=document.getElementById(which==='mat'?'matImgPreviewImg':'procImgPreviewImg');
+  img.src=src;
+  wrap.style.display='block';
+}
+
+function clearImg(which){
+  if(which==='mat'){
+    _matImg='';
+    document.getElementById('matImgPreview').style.display='none';
+    document.getElementById('matImgUrlRow').style.display='none';
+    document.getElementById('matImgPreviewImg').src='';
+    try{document.getElementById('matImgUrl').value='';}catch(e){}
+    try{document.getElementById('matImgFile').value='';}catch(e){}
+  } else {
+    _procImg='';
+    document.getElementById('procImgPreview').style.display='none';
+    document.getElementById('procImgUrlRow').style.display='none';
+    document.getElementById('procImgPreviewImg').src='';
+    try{document.getElementById('procImgUrl').value='';}catch(e){}
+    try{document.getElementById('procImgFile').value='';}catch(e){}
+  }
+}
+
+/* ══════════════════════════════════════
+   IMAGE MODAL — for existing items
+══════════════════════════════════════ */
+let _modalItemId='', _modalItemType='', _modalTempImg='';
+
+// Load all saved images from localStorage into the item objects
+function loadSavedImages(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('dc_images')||'{}');
+    materials.forEach(m=>{ if(saved[m.id]) m.image=saved[m.id]; });
+    processes.forEach(p=>{ if(saved[p.id]) p.image=saved[p.id]; });
+  }catch(e){}
+}
+
+function saveImageToStorage(id, imgData){
+  try{
+    const saved = JSON.parse(localStorage.getItem('dc_images')||'{}');
+    if(imgData) saved[id]=imgData;
+    else delete saved[id];
+    localStorage.setItem('dc_images', JSON.stringify(saved));
+  }catch(e){ showToast('Storage full — try a smaller image or use a URL instead'); }
+}
+
+function openImgModal(id, type){
+  _modalItemId=id; _modalItemType=type; _modalTempImg='';
+  const item = type==='material' ? materials.find(m=>m.id===id) : processes.find(p=>p.id===id);
+  if(!item) return;
+
+  const title = `📷 ${tc(item.name)}`;
+  document.getElementById('imgModalTitle').textContent=title;
+
+  // Reset modal state
+  document.getElementById('imgModalFile').value='';
+  document.getElementById('imgModalUrlInput').value='';
+  document.getElementById('imgModalUrlInput').style.display='none';
+  document.getElementById('btnImgModalUrl').classList.remove('active');
+
+  // Show existing image if any
+  const preview = document.getElementById('imgModalPreview');
+  const removeBtn = document.getElementById('btnImgModalRemove');
+  if(item.image){
+    preview.src=item.image; preview.style.display='block';
+    removeBtn.style.display='';
+    _modalTempImg=item.image;
+  } else {
+    preview.style.display='none';
+    removeBtn.style.display='none';
+  }
+
+  document.getElementById('imgModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeImgModal(){
+  document.getElementById('imgModal').classList.remove('open');
+  document.body.style.overflow='';
+  _modalTempImg='';
+}
+
+function toggleImgModalUrl(){
+  const input = document.getElementById('imgModalUrlInput');
+  const btn = document.getElementById('btnImgModalUrl');
+  const showing = input.style.display!=='none';
+  input.style.display = showing ? 'none' : 'block';
+  btn.classList.toggle('active', !showing);
+  if(!showing) input.focus();
+}
+
+function handleModalImgUpload(input){
+  const file=input.files[0];
+  if(!file) return;
+  if(file.size > 3*1024*1024){ showToast('Image too large — try under 3MB'); return; }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    _modalTempImg=e.target.result;
+    const preview=document.getElementById('imgModalPreview');
+    preview.src=_modalTempImg; preview.style.display='block';
+    document.getElementById('btnImgModalRemove').style.display='';
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleModalUrlInput(url){
+  if(!url){ return; }
+  _modalTempImg=url;
+  const preview=document.getElementById('imgModalPreview');
+  preview.src=url; preview.style.display='block';
+  document.getElementById('btnImgModalRemove').style.display='';
+}
+
+function saveModalImg(){
+  if(!_modalTempImg && !document.getElementById('imgModalUrlInput').value.trim()){
+    showToast('No image selected'); return;
+  }
+  const imgData = _modalTempImg || document.getElementById('imgModalUrlInput').value.trim();
+  // Update in memory
+  if(_modalItemType==='material'){
+    const m=materials.find(m=>m.id===_modalItemId);
+    if(m) m.image=imgData;
+  } else {
+    const p=processes.find(p=>p.id===_modalItemId);
+    if(p) p.image=imgData;
+  }
+  saveImageToStorage(_modalItemId, imgData);
+  closeImgModal();
+  liveSearch(); // re-render to show image
+  showToast('✓ Image saved');
+}
+
+function removeModalImg(){
+  if(_modalItemType==='material'){
+    const m=materials.find(m=>m.id===_modalItemId);
+    if(m) m.image='';
+  } else {
+    const p=processes.find(p=>p.id===_modalItemId);
+    if(p) p.image='';
+  }
+  saveImageToStorage(_modalItemId, '');
+  closeImgModal();
+  liveSearch();
+  showToast('Image removed');
+}
+
+/* AUTO LOAD */
+// Try to load from Google Sheet first, fall back to built-in data
+(async function(){
+  try{
+    const id='1CtUFueM32VCuyxxHLRW0OqXU2sCbQmvyggsVHH--ogc';
+    const key='AIzaSyBlo--g02Spa-vEXcDohrCYnj3I0FqppGU';
+    _sheetId=id; _apiKey=key;
+    const res=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${id}/values/Sheet1?key=${key}`);
+    if(!res.ok) throw new Error('sheet load failed');
+    parseSheetRows((await res.json()).values||[]);
+    loadSavedImages(); loadFavs(); populateCatFilter();
+    document.getElementById('btnRefresh').style.display='';
+    liveSearch();
+  }catch(e){
+    loadBuiltin(); // fallback
+  }
+})();
+</script>
+</body>
+</html>
